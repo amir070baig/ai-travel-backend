@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  role     String @default("USER")
+}
+
+model Itinerary {
+  id          String   @id @default(uuid())
+  sourceType  String   // "AI" | "ADMIN"
+  city        String
+  days        Int
+  budget      String
+  groupSize   Int
+  contentJson String
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+}
+
+model Request {
+  id           String   @id @default(uuid())
+  userId       String
+  itineraryId  String
+  status       String   @default("SUBMITTED")
+  createdAt    DateTime @default(now())
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  userId        String
+  itineraryId   String
+  requestId     String?
+  status        String   @default("PAYMENT_PENDING")
+  advanceAmount Int
+  createdAt     DateTime @default(now())
+}
