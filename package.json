@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "start": "npx ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +18,8 @@
     "jsonwebtoken": "^9.0.3",
     "openai": "^6.33.0",
     "prisma": "^5.22.0",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
