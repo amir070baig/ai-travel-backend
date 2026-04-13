@@ -6,6 +6,7 @@ import requestRoutes from "./modules/request/request.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
 import paymentRoutes from "./modules/payment/payment.routes";
 import adminRoutes from "./modules/admin/admin.routes";
+import itineraryRoutes from "./modules/itinerary/itinerary.routes";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/requests", requestRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/admin", adminRoutes);
+app.use("/itineraries", itineraryRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
