@@ -31,3 +31,20 @@ export const getAllRequests = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching requests" });
   }
 };
+
+export const acceptRevision = async (req: Request, res: Response) => {
+  const { requestId } = req.body;
+
+  try {
+    await prisma.request.update({
+      where: { id: requestId },
+      data: {
+        status: "APPROVED",
+      },
+    });
+
+    res.json({ message: "Revision accepted" });
+  } catch (err) {
+    res.status(500).json({ message: "Error accepting revision" });
+  }
+};
