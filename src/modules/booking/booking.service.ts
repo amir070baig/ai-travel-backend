@@ -9,8 +9,8 @@ export const createBooking = async (
     data: {
       userId,
       itineraryId,
-      requestId,
-      advanceAmount: 1000, // fixed for now
+      requestId: requestId || null,
+      advanceAmount: 1000,
     },
   });
 };
