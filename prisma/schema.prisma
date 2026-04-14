@@ -43,3 +43,10 @@ model Booking {
   advanceAmount Int
   createdAt     DateTime @default(now())
 }
+
+enum RequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}

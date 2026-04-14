@@ -5,6 +5,7 @@ export const createRequest = async (userId: string, itineraryId: string) => {
     data: {
       userId,
       itineraryId,
+      status: "UNDER_REVIEW",
     },
   });
 };
