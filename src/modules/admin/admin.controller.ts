@@ -24,3 +24,22 @@ export const reject = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Reject error" });
   }
 };
+
+import { prisma } from "../../shared/prisma/client";
+
+export const sendRevision = async (req: Request, res: Response) => {
+  const { requestId } = req.body;
+
+  try {
+    await prisma.request.update({
+      where: { id: requestId },
+      data: {
+        status: "REVISION_SENT",
+      },
+    });
+
+    res.json({ message: "Revision sent" });
+  } catch (err) {
+    res.status(500).json({ message: "Error sending revision" });
+  }
+};

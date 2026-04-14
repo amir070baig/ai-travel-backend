@@ -47,6 +47,7 @@ model Booking {
 enum RequestStatus {
   SUBMITTED
   UNDER_REVIEW
+  REVISION_SENT
   APPROVED
   REJECTED
 }
