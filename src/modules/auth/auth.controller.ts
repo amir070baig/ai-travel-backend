@@ -10,16 +10,38 @@ export const register = async (req: Request, res: Response) => {
 };
 
 
-import { loginUser } from "./auth.service";
+import jwt from "jsonwebtoken";
+import { prisma } from "../../shared/prisma/client";
+import bcrypt from "bcrypt";
 
 export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const data = await loginUser(email, password);
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    res.json(data);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
   }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: "Invalid credentials" });
+  }
+
+  const token = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "7d" }
+  );
+
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+    },
+  });
 };
