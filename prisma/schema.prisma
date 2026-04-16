@@ -44,6 +44,14 @@ model Booking {
   createdAt     DateTime @default(now())
 }
 
+model Tour {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Int
+  createdAt   DateTime @default(now())
+}
+
 enum RequestStatus {
   SUBMITTED
   UNDER_REVIEW
