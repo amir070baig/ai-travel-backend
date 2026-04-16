@@ -7,7 +7,7 @@ export const submitRequest = async (req: Request, res: Response) => {
     const { itineraryId } = req.body;
 
     // TEMP: hardcoded user
-    const userId = "test-user-id";
+    const userId = (req as any).user.userId;
 
     const request = await createRequest(userId, itineraryId);
 
@@ -20,7 +20,12 @@ export const submitRequest = async (req: Request, res: Response) => {
 
 export const getAllRequests = async (req: Request, res: Response) => {
   try {
+    const userId = (req as any).user.userId;
+
     const requests = await prisma.request.findMany({
+      where: {
+        userId,
+      },
       orderBy: {
         createdAt: "desc",
       },

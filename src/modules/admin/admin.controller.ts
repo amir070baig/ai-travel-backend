@@ -31,6 +31,16 @@ export const sendRevision = async (req: Request, res: Response) => {
   const { requestId } = req.body;
 
   try {
+    const request = await prisma.request.findUnique({
+      where: { id: requestId },
+    });
+
+    if (!request || request.status !== "UNDER_REVIEW") {
+      return res.status(400).json({
+        message: "Invalid request state",
+      });
+    }
+
     await prisma.request.update({
       where: { id: requestId },
       data: {
