@@ -5,7 +5,7 @@ export const create = async (req: Request, res: Response) => {
   try {
     const { itineraryId, requestId } = req.body;
 
-    const userId = req.user?.userId;
+    const userId = (req as any).user.userId;
 
     const booking = await createBooking(userId, itineraryId, requestId);
 
