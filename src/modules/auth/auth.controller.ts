@@ -1,25 +1,31 @@
 import { Request, Response } from "express";
 import { registerUser } from "./auth.service";
+import jwt from "jsonwebtoken";
+import { prisma } from "../../shared/prisma/client";
+import bcrypt from "bcrypt";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const user = await registerUser(email, password);
 
+  // ✅ CREATE TOKEN (THIS WAS MISSING)
+  const token = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "7d" }
+  );
+
   res.json({
     token,
     user: {
       id: user.id,
       email: user.email,
-      role: user.role, // ✅ ADD THIS
+      role: user.role,
     },
   });
 };
 
-
-import jwt from "jsonwebtoken";
-import { prisma } from "../../shared/prisma/client";
-import bcrypt from "bcrypt";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
