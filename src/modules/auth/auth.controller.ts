@@ -6,7 +6,14 @@ export const register = async (req: Request, res: Response) => {
 
   const user = await registerUser(email, password);
 
-  res.json(user);
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role, // ✅ ADD THIS
+    },
+  });
 };
 
 
@@ -42,6 +49,7 @@ export const login = async (req: Request, res: Response) => {
     user: {
       id: user.id,
       email: user.email,
+      role: user.role
     },
   });
 };
