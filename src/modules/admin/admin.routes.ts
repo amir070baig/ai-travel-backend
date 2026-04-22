@@ -3,6 +3,7 @@ import { approve, reject } from "./admin.controller";
 import { sendRevision } from "./admin.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { adminMiddleware } from "../../middleware/admin.middleware";
+import { getAllRequests } from "./admin.controller";
 
 
 const router = Router();
@@ -10,5 +11,6 @@ const router = Router();
 router.post("/approve", authMiddleware, adminMiddleware, approve);
 router.post("/reject", authMiddleware, adminMiddleware, reject);
 router.post("/revision", authMiddleware, adminMiddleware, sendRevision);
+router.get("/requests", authMiddleware, adminMiddleware, getAllRequests);
 
 export default router;

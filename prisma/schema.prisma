@@ -12,6 +12,7 @@ model User {
   email    String @unique
   password String
   role     String @default("USER")
+  requests Request[]
 }
 
 model Itinerary {
@@ -24,14 +25,18 @@ model Itinerary {
   contentJson String
   version     Int      @default(1)
   createdAt   DateTime @default(now())
+  requests Request[]
 }
 
 model Request {
-  id           String   @id @default(uuid())
-  userId       String
-  itineraryId  String
-  status       String   @default("SUBMITTED")
-  createdAt    DateTime @default(now())
+  id          String   @id @default(uuid())
+  userId      String
+  itineraryId String
+  status      RequestStatus
+  createdAt   DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
 }
 
 model Booking {

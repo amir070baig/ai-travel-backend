@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createRequest } from "./request.service";
 import { prisma } from "../../shared/prisma/client";
+import { getUserRequests } from "./request.service";
 
 export const submitRequest = async (req: Request, res: Response) => {
   try {
@@ -22,14 +23,11 @@ export const getAllRequests = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.userId;
 
-    const requests = await prisma.request.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+      const requests = await prisma.request.findMany({
+        where: {
+          userId: userId,
+        },
+      });
 
     res.json(requests);
   } catch (err) {

@@ -30,3 +30,15 @@ export const rejectRequest = async (requestId: string) => {
     data: { status: "REJECTED" },
   });
 };
+
+export const getAllRequestsAdmin = async () => {
+  return prisma.request.findMany({
+    include: {
+      itinerary: true,
+      user: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
