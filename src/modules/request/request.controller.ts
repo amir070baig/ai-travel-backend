@@ -23,11 +23,14 @@ export const getAllRequests = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.userId;
 
-      const requests = await prisma.request.findMany({
-        where: {
-          userId: userId,
-        },
-      });
+    const requests = await prisma.request.findMany({
+      where: {
+        userId: userId, // ✅ CRITICAL
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     res.json(requests);
   } catch (err) {
