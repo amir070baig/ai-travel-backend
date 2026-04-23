@@ -13,6 +13,7 @@ model User {
   password String
   role     String @default("USER")
   requests Request[]
+  bookings Booking[]
 }
 
 model Itinerary {
@@ -26,6 +27,7 @@ model Itinerary {
   version     Int      @default(1)
   createdAt   DateTime @default(now())
   requests Request[]
+  bookings    Booking[]
 }
 
 model Request {
@@ -44,9 +46,12 @@ model Booking {
   userId        String
   itineraryId   String
   requestId     String?
-  status        String   @default("PAYMENT_PENDING")
   advanceAmount Int
+  status        String   @default("CONFIRMED") // ✅ ADD THIS
   createdAt     DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
 }
 
 model Tour {
