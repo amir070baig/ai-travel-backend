@@ -4,7 +4,10 @@ import { prisma } from "../../shared/prisma/client";
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { itineraryId, requestId } = req.body;
+    const { itineraryId, requestId, tourId } = req.body;
+
+    // ✅ HANDLE BOTH CASES
+    const finalItineraryId = itineraryId || tourId;
 
     const userId = (req as any).user.userId;
 
@@ -13,13 +16,14 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "itineraryId required" });
     }
 
-    const booking = await createBooking(userId, itineraryId, requestId);
+    const booking = await createBooking(userId, finalItineraryId, requestId);
 
     res.json({
       message: "Booking successful",
       booking,
     });
   } catch (err) {
+    console.error("BOOKING ERROR:", err);
     res.status(500).json({ message: "Booking error" });
   }
 };
