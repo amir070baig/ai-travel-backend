@@ -38,3 +38,16 @@ export const getAllRequestsAdmin = async () => {
     },
   });
 };
+
+
+export const getAllBookingsAdmin = async () => {
+  return prisma.booking.findMany({
+    include: {
+      user: true,
+      itinerary: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { approveRequest, rejectRequest } from "./admin.service";
 import { getAllRequestsAdmin } from "./admin.service";
+import { getAllBookingsAdmin } from "./admin.service";
 
 export const approve = async (req: Request, res: Response) => {
   try {
@@ -62,5 +63,15 @@ export const getAllRequests = async (req: Request, res: Response) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Error fetching requests" });
+  }
+};
+
+
+export const getBookings = async (req: Request, res: Response) => {
+  try {
+    const data = await getAllBookingsAdmin();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching bookings" });
   }
 };
