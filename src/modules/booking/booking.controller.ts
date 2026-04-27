@@ -6,17 +6,27 @@ export const create = async (req: Request, res: Response) => {
   try {
     const { itineraryId, requestId, tourId } = req.body;
 
-    // ✅ HANDLE BOTH CASES
-    const finalItineraryId = itineraryId || tourId;
-
     const userId = (req as any).user.userId;
 
     // ✅ BASIC VALIDATION
-    if (!itineraryId) {
-      return res.status(400).json({ message: "itineraryId required" });
+    if (!itineraryId && !tourId) {
+      return res.status(400).json({
+        message: "Either itineraryId or tourId is required",
+      });
     }
 
-    const booking = await createBooking(userId, finalItineraryId, requestId);
+    if (itineraryId && tourId) {
+      return res.status(400).json({
+        message: "Send only one: itineraryId OR tourId",
+      });
+    }
+
+    const booking = await createBooking(
+      userId,
+      itineraryId,
+      requestId,
+      tourId
+    );
 
     res.json({
       message: "Booking successful",

@@ -44,14 +44,15 @@ model Request {
 model Booking {
   id            String   @id @default(uuid())
   userId        String
-  itineraryId   String
+  itineraryId   String?   // ✅ optional (AI flow)
+  tourId        String?   // ✅ optional (tour flow)
   requestId     String?
   advanceAmount Int
-  status        String   @default("CONFIRMED") // ✅ ADD THIS
+  status        String   @default("CONFIRMED")
   createdAt     DateTime @default(now())
 
-  user        User      @relation(fields: [userId], references: [id])
-  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
+  itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
 }
 
 model Tour {
