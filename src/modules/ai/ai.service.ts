@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY, // ✅ CHANGE
+  baseURL: "https://openrouter.ai/api/v1", // ✅ REQUIRED
 });
 
 // export const generateItinerary = async (data: {
@@ -35,20 +36,39 @@ export const generateItinerary = async (data: {
   budget: string;
   groupSize: number;
 }) => {
-  return `
+  const prompt = `
+Create a ${data.days}-day travel itinerary for Agra, India.
+
+Budget: ${data.budget}
+Group size: ${data.groupSize}
+
+Return ONLY this format:
+
 Day 1:
-- Visit Taj Mahal
-- Explore Agra Fort
-- Evening at Mehtab Bagh
+- ...
 
 Day 2:
-- Fatehpur Sikri trip
-- Local market shopping
+- ...
 
-Day 3:
-- Itmad-ud-Daulah
-- Relax and departure
+Keep it practical and tourist-friendly.
+No extra explanation.
 `;
+
+  const response = await client.chat.completions.create({
+    model: "openrouter/auto", // ✅ FREE + SMART ROUTING
+    messages: [
+      {
+        role: "system",
+        content: "You are a professional travel planner.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
+
+  return response.choices[0].message.content || "";
 };
 
 import { prisma } from "../../shared/prisma/client";
