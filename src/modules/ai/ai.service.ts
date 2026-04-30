@@ -1,35 +1,13 @@
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY, // ✅ CHANGE
-  baseURL: "https://openrouter.ai/api/v1", // ✅ REQUIRED
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  defaultHeaders: {
+    "HTTP-Referer": "https://ai-travel-frontend-kappa.vercel.app/", // or your Vercel URL
+    "X-Title": "AI Travel App",
+  },
 });
-
-// export const generateItinerary = async (data: {
-//   days: number;
-//   budget: string;
-//   groupSize: number;
-// }) => {
-//   const prompt = `
-// Create a ${data.days}-day travel itinerary for Agra, India.
-
-// Budget: ${data.budget}
-// Group size: ${data.groupSize}
-
-// Give a day-wise plan.
-// Keep it practical and tourist-friendly.
-// `;
-
-//   const response = await client.chat.completions.create({
-//     model: "gpt-4o-mini",
-//     messages: [
-//       { role: "system", content: "You are a travel planner." },
-//       { role: "user", content: prompt },
-//     ],
-//   });
-
-//   return response.choices[0].message.content || "";
-// };
 
 export const generateItinerary = async (data: {
   days: number;
@@ -54,21 +32,23 @@ Keep it practical and tourist-friendly.
 No extra explanation.
 `;
 
-  const response = await client.chat.completions.create({
-    model: "openrouter/auto", // ✅ FREE + SMART ROUTING
-    messages: [
-      {
-        role: "system",
-        content: "You are a professional travel planner.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-  });
+  try {
+    const response = await client.chat.completions.create({
+      model: "mistralai/mistral-7b-instruct",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
 
-  return response.choices[0].message.content || "";
+
+    return response.choices[0].message.content || "";
+  } catch (err) {
+    console.error("AI ERROR:", err);
+    throw err;
+  }
 };
 
 import { prisma } from "../../shared/prisma/client";
