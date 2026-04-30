@@ -37,15 +37,18 @@ No extra explanation.
     console.log("API KEY:", process.env.OPENROUTER_API_KEY);
 
     const response = await client.chat.completions.create({
-      model: "mistralai/mistral-7b-instruct",
+      model: "openrouter/auto",
       messages: [
+        {
+          role: "system",
+          content: "You are a professional travel planner.",
+        },
         {
           role: "user",
           content: prompt,
         },
       ],
     });
-
 
     return response.choices[0].message.content || "";
   } catch (err) {
