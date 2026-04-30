@@ -33,6 +33,8 @@ No extra explanation.
 `;
 
   try {
+    console.log("API KEY:", process.env.OPENROUTER_API_KEY);
+    
     const response = await client.chat.completions.create({
       model: "mistralai/mistral-7b-instruct",
       messages: [
