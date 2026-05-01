@@ -5,7 +5,7 @@ import { getAllBookingsAdmin } from "./admin.service";
 
 export const approve = async (req: Request, res: Response) => {
   try {
-    const { requestId } = req.body;
+    const { requestId, message } = req.body;
 
     const data = await approveRequest(requestId);
 
@@ -47,6 +47,7 @@ export const sendRevision = async (req: Request, res: Response) => {
       where: { id: requestId },
       data: {
         status: "REVISION_SENT",
+        revisionMessage: message,
       },
     });
 
