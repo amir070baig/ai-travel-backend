@@ -30,7 +30,7 @@ export const reject = async (req: Request, res: Response) => {
 import { prisma } from "../../shared/prisma/client";
 
 export const sendRevision = async (req: Request, res: Response) => {
-  const { requestId } = req.body;
+  const { requestId, message } = req.body;
 
   try {
     const request = await prisma.request.findUnique({
