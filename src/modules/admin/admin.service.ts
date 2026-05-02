@@ -41,10 +41,10 @@ export const getAllRequestsAdmin = async () => {
 
 
 export const getAllBookingsAdmin = async () => {
-  return prisma.booking.findMany({
+  return prisma.request.findMany({
     include: {
-      user: true,
-      itinerary: true,
+      user: true,        // ✅ who made request
+      itinerary: true,   // ✅ actual itinerary
     },
     orderBy: {
       createdAt: "desc",

@@ -54,3 +54,20 @@ export const acceptRevision = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error accepting revision" });
   }
 };
+
+export const rejectRevision = async (req: Request, res: Response) => {
+  const { requestId } = req.body;
+
+  try {
+    await prisma.request.update({
+      where: { id: requestId },
+      data: {
+        status: "UNDER_REVIEW", // back to admin
+      },
+    });
+
+    res.json({ message: "Revision rejected" });
+  } catch (err) {
+    res.status(500).json({ message: "Error rejecting revision" });
+  }
+};
