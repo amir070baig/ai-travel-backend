@@ -33,6 +33,10 @@ export const rejectRequest = async (requestId: string) => {
 
 export const getAllRequestsAdmin = async () => {
   return prisma.request.findMany({
+    include: {
+      user: true,        // ✅ WHO
+      itinerary: true,   // ✅ WHAT (THIS FIXES YOUR ISSUE)
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -41,10 +45,10 @@ export const getAllRequestsAdmin = async () => {
 
 
 export const getAllBookingsAdmin = async () => {
-  return prisma.request.findMany({
+  return prisma.booking.findMany({
     include: {
-      user: true,        // ✅ who made request
-      itinerary: true,   // ✅ actual itinerary
+      user: true,
+      itinerary: true, // optional (if linked)
     },
     orderBy: {
       createdAt: "desc",
