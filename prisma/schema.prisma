@@ -45,8 +45,9 @@ model Request {
 model Booking {
   id            String   @id @default(uuid())
   userId        String
-  itineraryId   String?   // ✅ optional (AI flow)
-  tourId        String?   // ✅ optional (tour flow)
+  itineraryId   String? 
+  tourId   String?
+  tour     Tour? @relation(fields: [tourId], references: [id])
   requestId     String?
   advanceAmount Int
   status        String   @default("CONFIRMED")
@@ -62,6 +63,7 @@ model Tour {
   description String
   price       Int
   createdAt   DateTime @default(now())
+  bookings  Booking[]
 }
 
 enum RequestStatus {

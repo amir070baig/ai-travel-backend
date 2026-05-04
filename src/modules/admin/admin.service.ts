@@ -48,7 +48,8 @@ export const getAllBookingsAdmin = async () => {
   return prisma.booking.findMany({
     include: {
       user: true,
-      itinerary: true, // optional (if linked)
+      itinerary: true, // for AI bookings
+      tour: true,      // 🔥 THIS IS THE FIX
     },
     orderBy: {
       createdAt: "desc",
