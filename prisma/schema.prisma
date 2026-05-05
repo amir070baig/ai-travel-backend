@@ -18,6 +18,7 @@ model User {
 
 model Itinerary {
   id          String   @id @default(uuid())
+  userId      String
   sourceType  String   // "AI" | "ADMIN"
   city        String
   days        Int

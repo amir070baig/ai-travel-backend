@@ -71,7 +71,7 @@ No extra explanation.
 
 import { prisma } from "../../shared/prisma/client";
 
-export const saveItinerary = async (data: any, content: string) => {
+export const saveItinerary = async (data: any, content: string, userId: string) => {
   return prisma.itinerary.create({
     data: {
       sourceType: "AI",
@@ -80,6 +80,7 @@ export const saveItinerary = async (data: any, content: string) => {
       budget: data.budget,
       groupSize: data.groupSize,
       contentJson: content,
+      userId: userId,
     },
   });
 };
