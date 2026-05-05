@@ -23,14 +23,7 @@ export const getAllRequests = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.userId;
 
-    const requests = await prisma.request.findMany({
-      where: {
-        userId: userId, // ✅ CRITICAL
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const requests = await getUserRequests(userId); // 🔥 USE SERVICE
 
     res.json(requests);
   } catch (err) {
