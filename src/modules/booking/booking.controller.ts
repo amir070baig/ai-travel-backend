@@ -44,6 +44,10 @@ export const getMyBookings = async (req: Request, res: Response) => {
 
     const bookings = await prisma.booking.findMany({
       where: { userId },
+      include: {
+        tour: true,       // 🔥 REQUIRED
+        itinerary: true,  // optional (AI bookings)
+      },
       orderBy: { createdAt: "desc" },
     });
 
