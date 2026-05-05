@@ -16,10 +16,22 @@ export const generateItinerary = async (data: {
   groupSize: number;
 }) => {
   const prompt = `
-Create a ${data.days}-day travel itinerary for Agra, India.
+Create a ${data.days}-day travel itinerary for Agra.
 
-Budget: ${data.budget}
+Budget: ₹${data.budget}
 Group size: ${data.groupSize}
+
+IMPORTANT:
+- Start with a unique and premium itinerary title
+- Include hotel options with price per night
+- Include transport cost
+- Include daily cost breakdown
+- Include TOTAL estimated cost
+- Add this disclaimer at the end:
+
+"Note: Prices are AI-generated estimates and may vary."
+
+Make it realistic and structured day-wise.
 
 Return ONLY this format:
 

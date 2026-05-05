@@ -56,6 +56,7 @@ export const rejectRevision = async (req: Request, res: Response) => {
       where: { id: requestId },
       data: {
         status: "UNDER_REVIEW", // back to admin
+        revisionStatus: "REJECTED_BY_USER"
       },
     });
 
