@@ -28,3 +28,27 @@ export const getMyItinerariesController = async (req: Request, res: Response) =>
     res.status(500).json({ message: "Error fetching itineraries" });
   }
 };
+
+
+export const saveItineraryController = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.userId;
+    const { content, days, budget, groupSize } = req.body;
+
+    const itinerary = await prisma.itinerary.create({
+      data: {
+        userId,
+        sourceType: "AI",
+        city: "Agra",
+        days,
+        budget,
+        groupSize,
+        contentJson: content,
+      },
+    });
+
+    res.json(itinerary);
+  } catch (err) {
+    res.status(500).json({ message: "Error saving itinerary" });
+  }
+};

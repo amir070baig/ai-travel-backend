@@ -22,7 +22,7 @@ Budget: ₹${data.budget}
 Group size: ${data.groupSize}
 
 IMPORTANT:
-- Start with a unique and premium itinerary title
+- Start with a unique itinerary title
 - Include hotel options with price per night
 - Include transport cost
 - Include daily cost breakdown
