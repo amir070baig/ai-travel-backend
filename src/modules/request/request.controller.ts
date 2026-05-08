@@ -39,6 +39,7 @@ export const acceptRevision = async (req: Request, res: Response) => {
       where: { id: requestId },
       data: {
         status: "APPROVED",
+        revisionStatus: "ACCEPTED_BY_USER"
       },
     });
 
