@@ -64,6 +64,7 @@ model Tour {
   title       String
   description String
   price       Int
+  imageUrl    String?
   createdAt   DateTime @default(now())
   bookings  Booking[]
 }

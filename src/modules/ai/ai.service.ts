@@ -16,34 +16,48 @@ export const generateItinerary = async (data: {
   groupSize: number;
 }) => {
   const prompt = `
-Create a ${data.days}-day travel itinerary for Agra.
+  Create a premium Agra travel itinerary.
 
-Budget: ₹${data.budget}
-Group size: ${data.groupSize}
+  Trip Details:
+  - Days: ${data.days}
+  - Budget: ₹${data.budget}
+  - Travelers: ${data.groupSize}
 
-IMPORTANT:
-- Start with a unique itinerary title
-- Include hotel options with price per night
-- Include transport cost
-- Include daily cost breakdown
-- Include TOTAL estimated cost
-- Add this disclaimer at the end:
+  IMPORTANT FORMAT RULES:
 
-"Note: Prices are AI-generated estimates and may vary."
+  1. Use clear headings.
+  2. Separate each day properly.
+  3. Keep lines short and readable.
+  4. Mention estimated costs.
+  5. Include food suggestions.
+  6. Include transport suggestions.
+  7. Include travel tips.
+  8. Mention that prices may vary.
 
-Make it realistic and structured day-wise.
+  FORMAT:
 
-Return ONLY this format:
+  Trip Overview
 
-Day 1:
-- ...
+  Day 1:
+  Morning:
+  Afternoon:
+  Evening:
 
-Day 2:
-- ...
+  Day 2:
+  Morning:
+  Afternoon:
+  Evening:
 
-Keep it practical and tourist-friendly.
-No extra explanation.
-`;
+  Hotel Suggestions
+
+  Estimated Budget Breakdown
+
+  Travel Tips
+
+  IMPORTANT:
+  Do NOT use markdown symbols like ** or ##.
+  Keep output clean and readable.
+  `;
 
   try {
     console.log("API KEY:", process.env.OPENROUTER_API_KEY);
