@@ -16,47 +16,53 @@ export const generateItinerary = async (data: {
   groupSize: number;
 }) => {
   const prompt = `
-  Create a premium Agra travel itinerary.
+  Create a highly detailed and realistic premium travel itinerary for Agra, India.
 
   Trip Details:
-  - Days: ${data.days}
+  - Number of Days: ${data.days}
   - Budget: ₹${data.budget}
   - Travelers: ${data.groupSize}
 
-  IMPORTANT FORMAT RULES:
+  IMPORTANT REQUIREMENTS:
 
-  1. Use clear headings.
-  2. Separate each day properly.
-  3. Keep lines short and readable.
-  4. Mention estimated costs.
-  5. Include food suggestions.
-  6. Include transport suggestions.
-  7. Include travel tips.
-  8. Mention that prices may vary.
+  1. Make the itinerary realistic and useful.
+  2. Mention REAL hotel suggestions with estimated prices.
+  3. Mention ticket prices wherever relevant.
+  4. Mention separate pricing for Indian and foreign tourists if applicable.
+  5. Include famous restaurants and food recommendations.
+  6. Include transport suggestions between locations.
+  7. Mention best timings for sightseeing.
+  8. Include practical travel advice and local tips.
+  9. Mention estimated total daily spending.
+  10. Mention places suitable for photography.
 
-  FORMAT:
+  FORMAT STYLE:
 
   Trip Overview
 
-  Day 1:
+  Day 1
   Morning:
   Afternoon:
   Evening:
 
-  Day 2:
+  Day 2
   Morning:
   Afternoon:
   Evening:
 
   Hotel Suggestions
 
-  Estimated Budget Breakdown
+  Budget Breakdown
 
   Travel Tips
 
   IMPORTANT:
-  Do NOT use markdown symbols like ** or ##.
-  Keep output clean and readable.
+  - Keep formatting clean.
+  - Do NOT use markdown symbols like ** or ##.
+  - Keep sections readable.
+  - Avoid giant paragraphs.
+  - Make recommendations feel premium and personalized.
+  - Mention that prices may vary depending on season.
   `;
 
   try {

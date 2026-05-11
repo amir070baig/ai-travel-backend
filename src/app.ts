@@ -8,6 +8,7 @@ import paymentRoutes from "./modules/payment/payment.routes";
 import adminRoutes from "./modules/admin/admin.routes";
 import itineraryRoutes from "./modules/itinerary/itinerary.routes";
 import tourRoutes from "./modules/tour/tour.routes";
+import notificationRoutes from "./modules/notification/notification.routes";
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use("/payments", paymentRoutes);
 app.use("/admin", adminRoutes);
 app.use("/itineraries", itineraryRoutes);
 app.use("/tours", tourRoutes);
-
+app.use("/notifications", notificationRoutes);
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });

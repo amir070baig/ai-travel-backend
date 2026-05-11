@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
 
   await prisma.tour.deleteMany();
-  
+
   await prisma.tour.createMany({
     data: [
 
@@ -15,7 +15,7 @@ async function main() {
           "Experience the breathtaking beauty of the Taj Mahal at sunrise with a private guided tour. Includes Agra Fort visit, hotel pickup, and expert storytelling about Mughal history.",
         price: 2499,
         imageUrl:
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGFqJTIwbWFoYWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+          "https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1400&auto=format&fit=crop",
       },
 
       {
@@ -24,7 +24,7 @@ async function main() {
           "Explore Agra’s most iconic attractions including Taj Mahal, Agra Fort, Mehtab Bagh, and Baby Taj in a comfortable private air-conditioned car with professional guide.",
         price: 4999,
         imageUrl:
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dGFqJTIwbWFoYWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
+          "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1400&auto=format&fit=crop",
       },
 
       {
