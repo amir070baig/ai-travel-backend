@@ -1,14 +1,97 @@
 import { Request, Response } from "express";
-import { createOrder } from "./payment.service";
+import crypto from "crypto";
+import { razorpay } from "./payment.service";
+import { prisma } from "../../shared/prisma/client";
+import { createNotification } from "../notification/notification.service";
 
-export const initiatePayment = async (req: Request, res: Response) => {
+export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { amount } = req.body;
 
-    const order = await createOrder(amount);
+    const { bookingId } = req.body;
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    const order = await razorpay.orders.create({
+      amount: booking.advanceAmount * 100,
+      currency: "INR",
+      receipt: `receipt_${booking.id}`,
+    });
+
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: {
+        orderId: order.id,
+      },
+    });
 
     res.json(order);
+
   } catch (err) {
-    res.status(500).json({ message: "Payment error" });
+    console.error(err);
+
+    res.status(500).json({
+      message: "Failed to create order",
+    });
+  }
+};
+
+export const verifyPayment = async (req: Request, res: Response) => {
+  try {
+
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      bookingId,
+    } = req.body;
+
+    const generatedSignature = crypto
+      .createHmac(
+        "sha256",
+        process.env.RAZORPAY_KEY_SECRET!
+      )
+      .update(
+        razorpay_order_id + "|" + razorpay_payment_id
+      )
+      .digest("hex");
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        message: "Invalid payment signature",
+      });
+    }
+
+    const booking = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        paymentStatus: "PAID",
+        paymentId: razorpay_payment_id,
+      },
+    });
+
+    await createNotification(
+      booking.userId,
+      "Payment Successful",
+      "Your advance payment has been received successfully."
+    );
+
+    res.json({
+      success: true,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Payment verification failed",
+    });
   }
 };

@@ -53,21 +53,30 @@ model Booking {
   tour     Tour? @relation(fields: [tourId], references: [id])
   requestId     String?
   advanceAmount Int
-  status        String   @default("CONFIRMED")
+  status        String   @default("PENDING")
   createdAt     DateTime @default(now())
 
   user        User       @relation(fields: [userId], references: [id])
   itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
+  paymentStatus String @default("PENDING")
+  paymentId     String?
+  orderId       String?
 }
 
 model Tour {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  price       Int
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  bookings  Booking[]
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  price         Int
+  imageUrl      String?
+  gallery       String[]
+  highlights    String[]
+  inclusions    String[]
+  exclusions    String[]
+  duration      String?
+  pickupPoint   String?
+  createdAt     DateTime @default(now())
+  bookings      Booking[]
 }
 
 model Notification {

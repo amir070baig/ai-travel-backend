@@ -11,11 +11,44 @@ async function main() {
 
       {
         title: "Taj Mahal Sunrise Tour",
+
         description:
-          "Experience the breathtaking beauty of the Taj Mahal at sunrise with a private guided tour. Includes Agra Fort visit, hotel pickup, and expert storytelling about Mughal history.",
-        price: 2499,
+          "Experience the beauty of the Taj Mahal at sunrise with skip-the-line access and expert local guidance.",
+
+        price: 2999,
+
         imageUrl:
-          "https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1400&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1564507592333-c60657eea523",
+
+        gallery: [
+          "https://images.unsplash.com/photo-1564507592333-c60657eea523",
+          "https://images.unsplash.com/photo-1548013146-72479768bada",
+          "https://images.unsplash.com/photo-1587474260584-136574528ed5"
+        ],
+
+        highlights: [
+          "Sunrise Taj Mahal visit",
+          "Private AC vehicle",
+          "Professional guide",
+          "Express entry"
+        ],
+
+        inclusions: [
+          "Hotel pickup",
+          "Private transport",
+          "Tour guide",
+          "Water bottle"
+        ],
+
+        exclusions: [
+          "Personal expenses",
+          "Lunch",
+          "Tips"
+        ],
+
+        duration: "5 Hours",
+
+        pickupPoint: "Agra Hotel / Railway Station"
       },
 
       {

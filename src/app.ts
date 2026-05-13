@@ -4,11 +4,13 @@ import authRoutes from "./modules/auth/auth.routes";
 import aiRoutes from "./modules/ai/ai.routes";
 import requestRoutes from "./modules/request/request.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
-import paymentRoutes from "./modules/payment/payment.routes";
 import adminRoutes from "./modules/admin/admin.routes";
 import itineraryRoutes from "./modules/itinerary/itinerary.routes";
 import tourRoutes from "./modules/tour/tour.routes";
 import notificationRoutes from "./modules/notification/notification.routes";
+import paymentRoutes from "./modules/payment/payment.routes";
+import pdfRoutes from "./modules/pdf/pdf.routes";
+import uploadRoutes from "./modules/upload/upload.routes";
 
 const app = express();
 
@@ -27,5 +29,8 @@ app.use("/notifications", notificationRoutes);
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });
+app.use("/payments", paymentRoutes);
+app.use("/pdf", pdfRoutes);
+app.use("/upload", uploadRoutes);
 
 export default app;
