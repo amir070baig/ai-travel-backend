@@ -11,6 +11,7 @@ import notificationRoutes from "./modules/notification/notification.routes";
 import paymentRoutes from "./modules/payment/payment.routes";
 import pdfRoutes from "./modules/pdf/pdf.routes";
 import uploadRoutes from "./modules/upload/upload.routes";
+import reviewRoutes from "./modules/review/review.routes";
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.get("/", (req, res) => {
 app.use("/payments", paymentRoutes);
 app.use("/pdf", pdfRoutes);
 app.use("/upload", uploadRoutes);
+app.use("/reviews", reviewRoutes);
 
 export default app;

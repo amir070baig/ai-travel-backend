@@ -1,14 +1,26 @@
 import { prisma } from "../../shared/prisma/client";
 
-export const createBooking = async (
-  userId: string,
-  itineraryId?: string,
-  requestId?: string,
-  tourId?: string
-) => {
-  let amount = 1000; // default for AI bookings
+interface BookingInput {
+  userId: string;
+  itineraryId?: string;
+  requestId?: string;
+  tourId?: string;
+  travelDate: Date;
+  timeSlot: string;
+  travelers: number;
+}
 
-  // 🔥 IF TOUR BOOKING → USE REAL PRICE
+export const createBooking = async ({
+  userId,
+  itineraryId,
+  requestId,
+  tourId,
+  travelDate,
+  timeSlot,
+  travelers,
+}: BookingInput) => {
+  let amount = 1000;
+
   if (tourId) {
     const tour = await prisma.tour.findUnique({
       where: { id: tourId },
@@ -26,6 +38,9 @@ export const createBooking = async (
       userId,
       itineraryId: itineraryId || null,
       tourId: tourId || null,
+      travelDate,
+      timeSlot,
+      travelers,
       requestId: requestId || null,
       advanceAmount: amount,
     },

@@ -15,6 +15,7 @@ model User {
   requests Request[]
   bookings Booking[]
   notifications Notification[]
+  reviews  Review[]
 }
 
 model Itinerary {
@@ -61,6 +62,9 @@ model Booking {
   paymentStatus String @default("PENDING")
   paymentId     String?
   orderId       String?
+  travelDate DateTime?
+  timeSlot   String?
+  travelers  Int @default(1)
 }
 
 model Tour {
@@ -77,6 +81,7 @@ model Tour {
   pickupPoint   String?
   createdAt     DateTime @default(now())
   bookings      Booking[]
+  reviews       Review[]
 }
 
 model Notification {
@@ -88,6 +93,17 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  tourId    String
+  tour      Tour @relation(fields: [tourId], references: [id])
 }
 
 enum RequestStatus {

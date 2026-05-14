@@ -4,7 +4,7 @@ import { prisma } from "../../shared/prisma/client";
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { itineraryId, requestId, tourId } = req.body;
+    const { itineraryId, requestId, tourId, travelDate, timeSlot, travelers } = req.body;
 
     const userId = (req as any).user.userId;
 
@@ -21,20 +21,24 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    const booking = await createBooking(
+    // ✅ FIX: Passed variables inside a single object argument
+    const booking = await createBooking({
       userId,
       itineraryId,
       requestId,
-      tourId
-    );
+      tourId,
+      travelDate,
+      timeSlot,
+      travelers
+    });
 
-    res.json({
+    return res.json({
       message: "Booking successful",
       booking,
     });
   } catch (err) {
     console.error("BOOKING ERROR:", err);
-    res.status(500).json({ message: "Booking error" });
+    return res.status(500).json({ message: "Booking error" });
   }
 };
 
@@ -45,15 +49,16 @@ export const getMyBookings = async (req: Request, res: Response) => {
     const bookings = await prisma.booking.findMany({
       where: { userId },
       include: {
-        tour: true,       // 🔥 REQUIRED
-        itinerary: true,  // optional (AI bookings)
+        tour: true,       
+        itinerary: true,  
       },
       orderBy: { createdAt: "desc" },
     });
 
-    res.json(bookings);
+    return res.json(bookings);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching bookings" });
+    console.error("FETCH ERROR:", err);
+    return res.status(500).json({ message: "Error fetching bookings" });
   }
 };
 
@@ -62,8 +67,13 @@ export const updateBookingStatus = async (
   res: Response
 ) => {
   try {
-
     const { bookingId, status } = req.body;
+
+    if (!bookingId || !status) {
+      return res.status(400).json({
+        message: "Both bookingId and status are required",
+      });
+    }
 
     const booking = await prisma.booking.update({
       where: {
@@ -74,12 +84,11 @@ export const updateBookingStatus = async (
       },
     });
 
-    res.json(booking);
+    return res.json(booking);
 
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
+    console.error("UPDATE ERROR:", err);
+    return res.status(500).json({
       message: "Failed to update booking",
     });
   }
