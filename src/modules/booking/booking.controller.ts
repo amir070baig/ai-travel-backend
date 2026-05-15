@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { createBooking } from "./booking.service";
 import { prisma } from "../../shared/prisma/client";
+import { sendEmail } from "../../shared/email";
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -21,7 +22,7 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    // ✅ FIX: Passed variables inside a single object argument
+    
     const booking = await createBooking({
       userId,
       itineraryId,
@@ -83,6 +84,46 @@ export const updateBookingStatus = async (
         status,
       },
     });
+
+    if (status === "CONFIRMED") {
+
+    const updatedBooking =
+      await prisma.booking.findUnique({
+        where: {
+          id: bookingId,
+        },
+
+        include: {
+          user: true,
+        },
+      });
+
+    if (updatedBooking?.user?.email) {
+
+      await sendEmail({
+        to: updatedBooking.user.email,
+
+        subject:
+          "Booking Confirmed 🎉",
+
+        html: `
+          <h1>
+            Booking Confirmed
+          </h1>
+
+          <p>
+            Your travel booking has been officially confirmed.
+          </p>
+
+          <p>
+            Our travel team looks forward to hosting your experience.
+          </p>
+        `,
+      });
+
+    }
+
+  }
 
     return res.json(booking);
 

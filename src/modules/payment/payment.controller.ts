@@ -3,10 +3,10 @@ import crypto from "crypto";
 import { razorpay } from "./payment.service";
 import { prisma } from "../../shared/prisma/client";
 import { createNotification } from "../notification/notification.service";
+import { sendEmail } from "../../shared/email"; // Ensure this import matches your project structure
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-
     const { bookingId } = req.body;
 
     const booking = await prisma.booking.findUnique({
@@ -33,10 +33,8 @@ export const createOrder = async (req: Request, res: Response) => {
     });
 
     res.json(order);
-
   } catch (err) {
     console.error(err);
-
     res.status(500).json({
       message: "Failed to create order",
     });
@@ -45,7 +43,6 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const verifyPayment = async (req: Request, res: Response) => {
   try {
-
     const {
       razorpay_order_id,
       razorpay_payment_id,
@@ -54,13 +51,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
     } = req.body;
 
     const generatedSignature = crypto
-      .createHmac(
-        "sha256",
-        process.env.RAZORPAY_KEY_SECRET!
-      )
-      .update(
-        razorpay_order_id + "|" + razorpay_payment_id
-      )
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
 
     if (generatedSignature !== razorpay_signature) {
@@ -69,7 +61,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
       });
     }
 
-    const booking = await prisma.booking.update({
+    const bookingData = await prisma.booking.update({
       where: { id: bookingId },
       data: {
         paymentStatus: "PAID",
@@ -78,18 +70,39 @@ export const verifyPayment = async (req: Request, res: Response) => {
     });
 
     await createNotification(
-      booking.userId,
+      bookingData.userId,
       "Payment Successful",
       "Your advance payment has been received successfully."
     );
 
+    // === PASTE START: Email Logic ===
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (booking?.user?.email) {
+      await sendEmail({
+        to: booking.user.email,
+        subject: "Payment Received ✅",
+        html: `
+          <h1>Payment Successful</h1>
+          <p>We have received your payment successfully.</p>
+          <p>Your booking is now confirmed.</p>
+        `,
+      });
+    }
+    // === PASTE END: Email Logic ===
+
     res.json({
       success: true,
     });
-
   } catch (err) {
     console.error(err);
-
     res.status(500).json({
       message: "Payment verification failed",
     });

@@ -1,78 +1,110 @@
 import { Request, Response } from "express";
-import { approveRequest, rejectRequest } from "./admin.service";
-import { getAllRequestsAdmin } from "./admin.service";
-import { getAllBookingsAdmin } from "./admin.service";
-
-export const approve = async (req: Request, res: Response) => {
-  try {
-    const { requestId, message } = req.body;
-
-    const data = await approveRequest(requestId);
-
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ message: "Approve error" });
-  }
-};
-
-export const reject = async (req: Request, res: Response) => {
-  try {
-    const { requestId } = req.body;
-
-    const data = await rejectRequest(requestId);
-
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ message: "Reject error" });
-  }
-};
-
+import crypto from "crypto";
+import { razorpay } from "../payment/payment.service";
 import { prisma } from "../../shared/prisma/client";
+import { createNotification } from "../notification/notification.service";
+import { sendEmail } from "../../shared/email"; 
 
-export const sendRevision = async (req: Request, res: Response) => {
-  const { requestId, message } = req.body;
-
+export const createOrder = async (req: Request, res: Response) => {
   try {
-    const request = await prisma.request.findUnique({
-      where: { id: requestId },
+    const { bookingId } = req.body;
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
     });
 
-    if (!request || request.status !== "UNDER_REVIEW") {
-      return res.status(400).json({
-        message: "Invalid request state",
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
       });
     }
 
-    await prisma.request.update({
-      where: { id: requestId },
+    const order = await razorpay.orders.create({
+      amount: booking.advanceAmount * 100,
+      currency: "INR",
+      receipt: `receipt_${booking.id}`,
+    });
+
+    await prisma.booking.update({
+      where: { id: booking.id },
       data: {
-        status: "REVISION_SENT",
-        revisionMessage: message,
+        orderId: order.id,
       },
     });
 
-    res.json({ message: "Revision sent" });
+    res.json(order);
   } catch (err) {
-    res.status(500).json({ message: "Error sending revision" });
+    console.error(err);
+    res.status(500).json({
+      message: "Failed to create order",
+    });
   }
 };
 
-
-export const getAllRequests = async (req: Request, res: Response) => {
+export const verifyPayment = async (req: Request, res: Response) => {
   try {
-    const data = await getAllRequestsAdmin();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching requests" });
-  }
-};
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      bookingId,
+    } = req.body;
 
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
 
-export const getBookings = async (req: Request, res: Response) => {
-  try {
-    const data = await getAllBookingsAdmin();
-    res.json(data);
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        message: "Invalid payment signature",
+      });
+    }
+
+    const bookingData = await prisma.booking.update({
+      where: { id: bookingId },
+      data: {
+        paymentStatus: "PAID",
+        paymentId: razorpay_payment_id,
+      },
+    });
+
+    await createNotification(
+      bookingData.userId,
+      "Payment Successful",
+      "Your advance payment has been received successfully."
+    );
+
+    // === NEW CODE ADDED HERE ===
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (booking?.user?.email) {
+      await sendEmail({
+        to: booking.user.email,
+        subject: "Payment Successful 💳",
+        html: `
+          <h1>Payment Received</h1>
+          <p>Your payment was received successfully.</p>
+          <p>Your booking is now confirmed.</p>
+        `,
+      });
+    }
+    // ===========================
+
+    res.json({
+      success: true,
+    });
   } catch (err) {
-    res.status(500).json({ message: "Error fetching bookings" });
+    console.error(err);
+    res.status(500).json({
+      message: "Payment verification failed",
+    });
   }
 };

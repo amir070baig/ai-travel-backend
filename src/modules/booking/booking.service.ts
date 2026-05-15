@@ -1,4 +1,5 @@
 import { prisma } from "../../shared/prisma/client";
+import { sendEmail } from "../../shared/email";
 
 interface BookingInput {
   userId: string;
@@ -33,7 +34,8 @@ export const createBooking = async ({
     amount = tour.price;
   }
 
-  return prisma.booking.create({
+  // 1. Save the created booking to a variable
+  const booking = await prisma.booking.create({
     data: {
       userId,
       itineraryId: itineraryId || null,
@@ -45,4 +47,28 @@ export const createBooking = async ({
       advanceAmount: amount,
     },
   });
+
+  // 2. Fetch user details using the provided userId
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  // 3. Trigger email if user has a valid email address
+  if (user?.email) {
+    await sendEmail({
+      to: user.email,
+      subject: "Booking Confirmation - AI Travel Planner",
+      html: `
+        <h1>Booking Confirmed ✅</h1>
+        <p>Your booking has been received successfully.</p>
+        <p>Our travel team will contact you shortly.</p>
+        <p>Thank you for choosing AI Travel Planner.</p>
+      `,
+    });
+  }
+
+  // 4. Return the original booking data to the caller
+  return booking;
 };
