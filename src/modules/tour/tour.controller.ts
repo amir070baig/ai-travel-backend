@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+// 1. Import your tour validation schema
+import { tourSchema } from "../../validations/tour.validation";
 
 const prisma = new PrismaClient();
 
@@ -35,6 +37,22 @@ export const createTour = async (
   res: Response
 ) => {
   try {
+    // 2. Coerce price string to number before running safeParse if it comes from a form-data request
+    const bodyToValidate = {
+      ...req.body,
+      price: req.body.price ? Number(req.body.price) : undefined,
+    };
+
+    const parsed = tourSchema.safeParse(bodyToValidate);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid tour data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    // 3. Use clean validated data
     const {
       title,
       description,
@@ -46,13 +64,13 @@ export const createTour = async (
       exclusions,
       duration,
       pickupPoint,
-    } = req.body;
+    } = parsed.data;
 
     const tour = await prisma.tour.create({
       data: {
         title,
         description,
-        price: Number(price),
+        price,
         imageUrl,
         gallery, 
         highlights,
@@ -71,11 +89,27 @@ export const createTour = async (
 };
 
 export const updateTour = async (
-  req: Request<TourParams>, // Fixes the string[] type error
+  req: Request<TourParams>, 
   res: Response
 ) => {
   try {
     const { id } = req.params;
+
+    // 4. Coerce price string to number for updates as well
+    const bodyToValidate = {
+      ...req.body,
+      price: req.body.price ? Number(req.body.price) : undefined,
+    };
+
+    const parsed = tourSchema.safeParse(bodyToValidate);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid tour data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
     const {
       title,
       description,
@@ -87,14 +121,14 @@ export const updateTour = async (
       exclusions,
       duration,
       pickupPoint,
-    } = req.body;
+    } = parsed.data;
 
     const tour = await prisma.tour.update({
       where: { id },
       data: {
         title,
         description,
-        price: Number(price),
+        price,
         imageUrl,
         gallery, 
         highlights,
@@ -113,7 +147,7 @@ export const updateTour = async (
 };
 
 export const deleteTour = async (
-  req: Request<TourParams>, // Fixes the string[] type error
+  req: Request<TourParams>, 
   res: Response
 ) => {
   try {

@@ -12,11 +12,33 @@ import paymentRoutes from "./modules/payment/payment.routes";
 import pdfRoutes from "./modules/pdf/pdf.routes";
 import uploadRoutes from "./modules/upload/upload.routes";
 import reviewRoutes from "./modules/review/review.routes";
+import leadRoutes from "./modules/lead/lead.routes";
+import rateLimit from "express-rate-limit";
+// @ts-ignore: no declaration file for cookie-parser
+import cookieParser from "cookie-parser";
 
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
 
-app.use(cors({ origin: "*" })); // ✅ only once
+  max: 100,
+
+  message:
+    "Too many requests. Please try again later.",
+});
+
+app.use(limiter);
+app.use(
+  cors({
+    origin: [
+      "https://ai-travel-frontend-kappa.vercel.app",
+    ],
+
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/auth", authRoutes);
 app.use("/ai", aiRoutes);
@@ -34,5 +56,6 @@ app.use("/payments", paymentRoutes);
 app.use("/pdf", pdfRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/reviews", reviewRoutes);
-
+app.use("/leads", leadRoutes);
+app.use("/ai", aiRoutes);
 export default app;

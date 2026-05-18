@@ -106,6 +106,17 @@ model Review {
   tour      Tour @relation(fields: [tourId], references: [id])
 }
 
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  status    String @default("NEW")
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
 enum RequestStatus {
   SUBMITTED
   UNDER_REVIEW

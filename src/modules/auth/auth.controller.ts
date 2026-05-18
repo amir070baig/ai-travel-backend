@@ -3,9 +3,22 @@ import { registerUser } from "./auth.service";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../shared/prisma/client";
 import bcrypt from "bcrypt";
+// Updated to import both schemas
+import { registerSchema, loginSchema } from "../../validations/auth.validation";
 
 export const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  // 1. Validate registration inputs
+  const parsed = registerSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json({
+      message: "Invalid registration data",
+      errors: parsed.error.flatten(),
+    });
+  }
+
+  // 2. Use validated data
+  const { email, password } = parsed.data;
 
   const user = await registerUser(email, password);
 
@@ -26,9 +39,19 @@ export const register = async (req: Request, res: Response) => {
   });
 };
 
-
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  // 1. Validate login inputs
+  const parsed = loginSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json({
+      message: "Invalid login data",
+      errors: parsed.error.flatten(),
+    });
+  }
+
+  // 2. Use validated data
+  const { email, password } = parsed.data;
 
   const user = await prisma.user.findUnique({
     where: { email },
@@ -50,12 +73,25 @@ export const login = async (req: Request, res: Response) => {
     { expiresIn: "7d" }
   );
 
-  res.json({
+  res.cookie(
+    "token",
     token,
-    user: {
-      id: user.id,
-      email: user.email,
-      role: user.role
-    },
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    }
+  );
+
+  res.json({
+    user,
+  });
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.json({
+    message: "Logged out",
   });
 };

@@ -6,6 +6,8 @@ import {
   updateTour,
   deleteTour,
 } from "./tour.controller";
+import { authMiddleware } from "../../middleware/auth.middleware";
+import { adminMiddleware } from "../../middleware/admin.middleware";
 
 const router = Router();
 
@@ -40,12 +42,25 @@ router.get("/", async (req, res) => {
 //   res.json(tour);
 // });
 
-router.get("/:id", getTourById);
+router.post(
+  "/",
+  authMiddleware,
+  adminMiddleware,
+  createTour
+);
 
-router.post("/", createTour);
+router.patch(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateTour
+);
 
-router.patch("/:id", updateTour);
-
-router.delete("/:id", deleteTour);
+router.delete(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteTour
+);
 
 export default router;

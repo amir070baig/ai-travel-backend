@@ -14,55 +14,65 @@ export const generateItinerary = async (data: {
   days: number;
   budget: string;
   groupSize: number;
+  travelStyle: string;
+  tripType: string;
+  interests: string;
 }) => {
-  const prompt = `
-  Create a highly detailed and realistic premium travel itinerary for Agra, India.
+  const { days, budget, groupSize, travelStyle, tripType, interests } = data;
 
-  Trip Details:
-  - Number of Days: ${data.days}
-  - Budget: ₹${data.budget}
-  - Travelers: ${data.groupSize}
+  const prompt = `
+  Create a highly personalized premium travel itinerary for Agra, India.
+
+  Traveler Details:
+  - Days: ${days}
+  - Budget: ₹${budget}
+  - Travelers: ${groupSize}
+  - Travel Style: ${travelStyle}
+  - Trip Type: ${tripType}
+  - Interests: ${interests}
 
   IMPORTANT REQUIREMENTS:
 
-  1. Make the itinerary realistic and useful.
-  2. Mention REAL hotel suggestions with estimated prices.
-  3. Mention ticket prices wherever relevant.
-  4. Mention separate pricing for Indian and foreign tourists if applicable.
-  5. Include famous restaurants and food recommendations.
-  6. Include transport suggestions between locations.
-  7. Mention best timings for sightseeing.
-  8. Include practical travel advice and local tips.
-  9. Mention estimated total daily spending.
-  10. Mention places suitable for photography.
+  1. Make itinerary realistic, premium and budget friendly.
+  2. Include actual hotel suggestions.
+  3. Include local restaurant suggestions.
+  4. Include realistic transport planning.
+  5. Optimize timings intelligently.
+  6. Suggest less crowded timings.
+  7. Include photography opportunities if relevant.
+  8. Include local insider recommendations.
+  9. Avoid generic recommendations.
+  10. Mention estimated costs.
+  11. Mention practical travel tips.
+  12. Include hidden gems when appropriate.
+  13. Tailor recommendations to travel style.
 
-  FORMAT STYLE:
+  FORMAT:
 
   Trip Overview
 
-  Day 1
+  Day 1:
   Morning:
   Afternoon:
   Evening:
 
-  Day 2
+  Day 2:
   Morning:
   Afternoon:
   Evening:
 
-  Hotel Suggestions
+  Hotel Recommendations
 
-  Budget Breakdown
+  Food Recommendations
+
+  Estimated Budget Breakdown
 
   Travel Tips
 
   IMPORTANT:
-  - Keep formatting clean.
-  - Do NOT use markdown symbols like ** or ##.
-  - Keep sections readable.
-  - Avoid giant paragraphs.
-  - Make recommendations feel premium and personalized.
-  - Mention that prices may vary depending on season.
+  - Keep formatting clean
+  - No markdown symbols
+  - Use short readable paragraphs
   `;
 
   try {
@@ -99,6 +109,9 @@ export const saveItinerary = async (data: any, content: string, userId: string) 
       days: data.days,
       budget: data.budget,
       groupSize: data.groupSize,
+      travelStyle: data.travelStyle,
+      tripType: data.tripType,
+      interests: data.interests,
       contentJson: content,
       userId: userId,
     },

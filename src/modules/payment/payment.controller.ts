@@ -4,10 +4,22 @@ import { razorpay } from "./payment.service";
 import { prisma } from "../../shared/prisma/client";
 import { createNotification } from "../notification/notification.service";
 import { sendEmail } from "../../shared/email"; // Ensure this import matches your project structure
+// 1. Import payment validation schemas
+import { createOrderSchema, verifyPaymentSchema } from "../../validations/payment.validation";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { bookingId } = req.body;
+    // 2. Validate create order payload
+    const parsed = createOrderSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid order data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const { bookingId } = parsed.data;
 
     const booking = await prisma.booking.findUnique({
       where: { id: bookingId },
@@ -43,12 +55,22 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const verifyPayment = async (req: Request, res: Response) => {
   try {
+    // 3. Validate signature webhook / return payload
+    const parsed = verifyPaymentSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Invalid payment verification data",
+        errors: parsed.error.flatten(),
+      });
+    }
+
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
       bookingId,
-    } = req.body;
+    } = parsed.data;
 
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -75,7 +97,7 @@ export const verifyPayment = async (req: Request, res: Response) => {
       "Your advance payment has been received successfully."
     );
 
-    // === PASTE START: Email Logic ===
+    // === Email Logic ===
     const booking = await prisma.booking.findUnique({
       where: {
         id: bookingId,
@@ -96,7 +118,6 @@ export const verifyPayment = async (req: Request, res: Response) => {
         `,
       });
     }
-    // === PASTE END: Email Logic ===
 
     res.json({
       success: true,

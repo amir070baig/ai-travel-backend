@@ -2,9 +2,28 @@ import { Request, Response } from "express";
 import { createBooking } from "./booking.service";
 import { prisma } from "../../shared/prisma/client";
 import { sendEmail } from "../../shared/email";
+import {bookingSchema} from "../../validations/booking.validation";
 
 export const create = async (req: Request, res: Response) => {
   try {
+
+    const parsed =
+      bookingSchema.safeParse(
+        req.body
+      );
+
+    if (!parsed.success) {
+
+      return res.status(400).json({
+        message:
+          "Invalid booking data",
+
+        errors:
+          parsed.error.flatten(),
+      });
+
+    }
+    
     const { itineraryId, requestId, tourId, travelDate, timeSlot, travelers } = req.body;
 
     const userId = (req as any).user.userId;
