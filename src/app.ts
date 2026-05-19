@@ -38,6 +38,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use("/payments/webhook", express.raw({type: "*/*",}));
 app.use(cookieParser());
 
 app.use("/auth", authRoutes);

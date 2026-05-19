@@ -34,6 +34,9 @@ export const createOrder = async (req: Request, res: Response) => {
     const order = await razorpay.orders.create({
       amount: booking.advanceAmount * 100,
       currency: "INR",
+      notes: {
+        bookingId,
+      },
       receipt: `receipt_${booking.id}`,
     });
 
