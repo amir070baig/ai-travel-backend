@@ -30,10 +30,7 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(
   cors({
-    origin: [
-      "https://ai-travel-frontend-kappa.vercel.app",
-    ],
-
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
