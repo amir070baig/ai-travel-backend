@@ -25,9 +25,20 @@ export const createRequest = async (
 
   return prisma.request.create({
     data: {
-      userId,
-      itineraryId,
+
       status: "UNDER_REVIEW",
+
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+
+      itinerary: {
+        connect: {
+          id: itineraryId,
+        },
+      },
     },
   });
 };
