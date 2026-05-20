@@ -24,7 +24,15 @@ export const create = async (req: Request, res: Response) => {
 
     }
     
-    const { itineraryId, requestId, tourId, travelDate, timeSlot, travelers } = req.body;
+    const {
+      itineraryId,
+      requestId,
+      tourId,
+      travelDate,
+      timeSlot,
+      travelers,
+      advanceAmount,
+    } = parsed.data;
 
     const userId = (req as any).user.userId;
 
@@ -47,9 +55,13 @@ export const create = async (req: Request, res: Response) => {
       itineraryId,
       requestId,
       tourId,
-      travelDate,
+      travelDate:
+        travelDate
+          ? new Date(travelDate)
+          : undefined,
       timeSlot,
-      travelers
+      travelers,
+      advanceAmount
     });
 
     return res.json({

@@ -53,7 +53,7 @@ model Booking {
   tourId   String?
   tour     Tour? @relation(fields: [tourId], references: [id])
   requestId     String?
-  advanceAmount Int
+  advanceAmount Int @default(0)
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
 

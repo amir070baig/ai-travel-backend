@@ -6,12 +6,25 @@ import { createNotification } from "../notification/notification.service";
 
 export const submitRequest = async (req: Request, res: Response) => {
   try {
-    const { itineraryId } = req.body;
+    const { content, days, budget, groupSize } = req.body;
 
     // TEMP: hardcoded user
     const userId = (req as any).user.userId;
 
-    const request = await createRequest(userId, itineraryId);
+    const itinerary =
+      await prisma.itinerary.create({
+        data: {
+          userId,
+          city: "Agra",
+          days,
+          budget,
+          groupSize,
+          sourceType: "AI",
+          contentJson: content,
+        },
+      });
+
+    const request = await createRequest(userId, itinerary.id);
 
       await createNotification(
         userId,
