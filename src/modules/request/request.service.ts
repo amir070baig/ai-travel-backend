@@ -1,6 +1,28 @@
 import { prisma } from "../../shared/prisma/client";
 
-export const createRequest = async (userId: string, itineraryId: string) => {
+export const createRequest = async (
+  userId: string,
+  itineraryId: string
+) => {
+
+  // CHECK EXISTING REQUEST
+  const existingRequest =
+    await prisma.request.findFirst({
+      where: {
+        userId,
+        itineraryId,
+        status: {
+          not: "REJECTED",
+        },
+      },
+    });
+
+  if (existingRequest) {
+    throw new Error(
+      "You already submitted this itinerary"
+    );
+  }
+
   return prisma.request.create({
     data: {
       userId,

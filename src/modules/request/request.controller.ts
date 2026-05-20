@@ -20,8 +20,13 @@ export const submitRequest = async (req: Request, res: Response) => {
       );
 
       res.json(request);
-  } catch (err) {
-    res.status(500).json({ message: "Error creating request" });
+  } catch (err: any) {
+
+    res.status(400).json({
+      message:
+        err.message || "Error creating request",
+    });
+
   }
 };
 
