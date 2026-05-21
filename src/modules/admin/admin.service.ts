@@ -81,6 +81,8 @@ export const approveRequest = async (requestId: string) => {
         requestId: request.id,
         status: "CONFIRMED",
         advanceAmount: 2000,
+        travelers:
+          request.itinerary.groupSize,
       },
     });
 
