@@ -74,13 +74,25 @@ export const approveRequest = async (requestId: string) => {
 
   if (!existingBooking) {
 
+    const budgetValue = Number(
+      request.itinerary.budget.replace(/[^\d]/g, "")
+    );
+
+    const calculatedAdvance =
+      Math.floor(budgetValue * 0.15);
+
+    const advanceAmount = Math.min(
+      5000,
+      Math.max(499, calculatedAdvance)
+    );
+
     await prisma.booking.create({
       data: {
         userId: request.userId,
         itineraryId: request.itineraryId,
         requestId: request.id,
         status: "CONFIRMED",
-        advanceAmount: 2000,
+        advanceAmount,
         travelers:
           request.itinerary.groupSize,
       },

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../shared/prisma/client";
-
+import {sendEmail} from "../../shared/email";
 import {
   approveRequest,
   rejectRequest,
@@ -100,6 +100,33 @@ export const sendRevision = async (req: Request, res: Response) => {
     });
 
 
+    // SEND EMAIL TO USER
+    await sendEmail({
+      to: request.user.email,
+
+      subject: "Your Itinerary Needs Revision ✏️",
+
+      html: `
+        <h1>Revision Requested</h1>
+
+        <p>
+          Our travel concierge team reviewed your itinerary request.
+        </p>
+
+        <p>
+          Revision Notes:
+        </p>
+
+        <p>
+          ${message}
+        </p>
+
+        <p>
+          Please review your dashboard for updated guidance and next steps.
+        </p>
+      `,
+    });
+
 
     return res.status(200).json({
       success: true,
@@ -114,6 +141,7 @@ export const sendRevision = async (req: Request, res: Response) => {
     });
   }
 };
+
 
 
 

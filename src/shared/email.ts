@@ -16,16 +16,23 @@ export const sendEmail = async ({
 
   try {
 
-    await resend.emails.send({
-      from:
-        "AI Travel Planner <onboarding@resend.dev>",
+    const result =
+      await resend.emails.send({
 
-      to,
+        from:
+          "AI Travel Planner <onboarding@resend.dev>",
 
-      subject,
+        to,
 
-      html,
-    });
+        subject,
+
+        html,
+      });
+
+    console.log(
+      "EMAIL SENT:",
+      result
+    );
 
   } catch (err) {
 

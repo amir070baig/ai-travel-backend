@@ -31,6 +31,8 @@ export const createOrder = async (req: Request, res: Response) => {
       });
     }
 
+    console.log("BOOKING AMOUNT:", booking.advanceAmount);
+    
     const order = await razorpay.orders.create({
       amount: booking.advanceAmount * 100,
       currency: "INR",
