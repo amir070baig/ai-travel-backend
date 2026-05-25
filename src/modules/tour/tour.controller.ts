@@ -108,6 +108,12 @@ export const updateTour = async (
     const parsed = tourSchema.safeParse(bodyToValidate);
 
     if (!parsed.success) {
+
+      console.log(
+        "TOUR VALIDATION ERROR:",
+        parsed.error.flatten()
+      );
+
       return res.status(400).json({
         message: "Invalid tour data",
         errors: parsed.error.flatten(),
@@ -159,6 +165,10 @@ export const deleteTour = async (
   res: Response
 ) => {
   try {
+    console.log(
+      "UPDATE BODY:",
+      req.body
+    );
     const { id } = req.params;
 
     await prisma.tour.delete({
