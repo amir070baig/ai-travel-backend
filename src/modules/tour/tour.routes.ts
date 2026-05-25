@@ -20,6 +20,12 @@ router.get("/", async (req, res) => {
   res.json(tours);
 });
 
+// GET single tour by ID
+router.get(
+  "/:id",
+  getTourById
+);
+
 // CREATE tour (for now open, later admin only)
 // router.post("/", async (req, res) => {
 //   const {
