@@ -9,8 +9,8 @@ export const tourSchema = z.object({
   highlights: z.array(z.string()).default([]),
   inclusions: z.array(z.string()).default([]),
   exclusions: z.array(z.string()).default([]),
-  duration: z.string().min(1, { message: "Duration is required" }),
-  pickupPoint: z.string().min(1, { message: "Pickup point is required" }),
+  duration: z.string().optional(),
+  pickupPoint: z.string().optional(),
   pickupTime: z.string().optional(),
   availabilityNote: z.string().optional(),
 });
