@@ -64,6 +64,8 @@ export const createTour = async (
       exclusions,
       duration,
       pickupPoint,
+      pickupTime,
+      availabilityNote,
     } = parsed.data;
 
     const tour = await prisma.tour.create({
@@ -78,6 +80,8 @@ export const createTour = async (
         exclusions,
         duration,
         pickupPoint,
+        pickupTime,
+        availabilityNote,
       },
     });
 
@@ -121,6 +125,8 @@ export const updateTour = async (
       exclusions,
       duration,
       pickupPoint,
+      pickupTime,
+      availabilityNote,
     } = parsed.data;
 
     const tour = await prisma.tour.update({
@@ -136,6 +142,8 @@ export const updateTour = async (
         exclusions,
         duration,
         pickupPoint,
+        pickupTime,
+        availabilityNote,
       },
     });
 

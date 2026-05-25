@@ -11,4 +11,6 @@ export const tourSchema = z.object({
   exclusions: z.array(z.string()).default([]),
   duration: z.string().min(1, { message: "Duration is required" }),
   pickupPoint: z.string().min(1, { message: "Pickup point is required" }),
+  pickupTime: z.string().optional(),
+  availabilityNote: z.string().optional(),
 });

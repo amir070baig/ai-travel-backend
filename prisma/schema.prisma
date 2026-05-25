@@ -79,6 +79,8 @@ model Tour {
   exclusions    String[]
   duration      String?
   pickupPoint   String?
+  pickupTime      String?
+  availabilityNote String?
   createdAt     DateTime @default(now())
   bookings      Booking[]
   reviews       Review[]
