@@ -40,13 +40,24 @@ export const createBooking = async ({
   const booking = await prisma.booking.create({
     data: {
       userId,
+
       itineraryId: itineraryId || null,
+
       tourId: tourId || null,
+
       travelDate,
+
       timeSlot,
+
       travelers,
+
       requestId: requestId || null,
+
       advanceAmount: advanceAmount || amount,
+
+      status: tourId
+        ? "CONFIRMED"
+        : "PENDING",
     },
   });
 
