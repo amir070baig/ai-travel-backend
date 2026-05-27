@@ -49,7 +49,10 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    
+    console.log(
+      "BOOKING BODY:",
+      req.body
+    );
     const booking = await createBooking({
       userId,
       itineraryId,
