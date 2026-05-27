@@ -39,7 +39,7 @@ export const createOrder = async (req: Request, res: Response) => {
       notes: {
         bookingId,
       },
-      receipt: `receipt_${booking.id}`,
+      receipt: `rcpt_${booking.id.slice(0, 10)}`,
     });
 
     await prisma.booking.update({
@@ -51,7 +51,10 @@ export const createOrder = async (req: Request, res: Response) => {
 
     res.json(order);
   } catch (err) {
-    console.error(err);
+    console.error(
+      "RAZORPAY ERROR:",
+      JSON.stringify(err, null, 2)
+    );
     res.status(500).json({
       message: "Failed to create order",
     });
@@ -136,7 +139,10 @@ export const verifyPayment = async (req: Request, res: Response) => {
       success: true,
     });
   } catch (err) {
-    console.error(err);
+    console.error(
+      "RAZORPAY ERROR:",
+      JSON.stringify(err, null, 2)
+    );
     res.status(500).json({
       message: "Payment verification failed",
     });
