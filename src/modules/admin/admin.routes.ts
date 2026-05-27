@@ -14,5 +14,11 @@ router.post("/reject", authMiddleware, adminMiddleware, reject);
 router.post("/revision", authMiddleware, adminMiddleware, sendRevision);
 router.get("/requests", authMiddleware, adminMiddleware, getAllRequests);
 router.get("/bookings", authMiddleware, adminMiddleware, getBookings);
+router.get("/verify", authMiddleware, adminMiddleware, (req, res) => {
+    res.json({
+      success: true,
+    });
+  }
+);
 
 export default router;
