@@ -90,9 +90,17 @@ export const verifyPayment = async (req: Request, res: Response) => {
 
     const bookingData = await prisma.booking.update({
       where: { id: bookingId },
+      // data: {
+      //   paymentStatus: "PAID",
+      //   paymentId: razorpay_payment_id,
+      // },
       data: {
         paymentStatus: "PAID",
-        paymentId: razorpay_payment_id,
+
+        paymentId:
+          razorpay_payment_id,
+
+        status: "CONFIRMED",
       },
     });
 

@@ -55,9 +55,12 @@ export const createBooking = async ({
 
       advanceAmount: advanceAmount || amount,
 
+      // status: tourId
+      //   ? "CONFIRMED"
+      //   : "PENDING",
       status: tourId
-        ? "CONFIRMED"
-        : "PENDING",
+      ? "PENDING_PAYMENT"
+      : "PENDING",
     },
   });
 
