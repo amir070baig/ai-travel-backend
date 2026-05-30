@@ -44,6 +44,7 @@ model Request {
   user        User      @relation(fields: [userId], references: [id])
   itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
   revisionStatus  String?
+  finalPrice Int?
 }
 
 model Booking {
