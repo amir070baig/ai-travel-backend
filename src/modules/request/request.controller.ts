@@ -4,40 +4,56 @@ import { prisma } from "../../shared/prisma/client";
 import { getUserRequests } from "./request.service";
 import { createNotification } from "../notification/notification.service";
 
-export const submitRequest = async (req: Request, res: Response) => {
+export const submitRequest = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const { content, days, budget, groupSize } = req.body;
 
-    // TEMP: hardcoded user
-    const userId = (req as any).user.userId;
+    const { itineraryId } = req.body;
+
+    const userId =
+      (req as any).user.userId;
+
+    if (!itineraryId) {
+      return res.status(400).json({
+        message: "Itinerary ID is required",
+      });
+    }
 
     const itinerary =
-      await prisma.itinerary.create({
-        data: {
-          userId,
-          city: "Agra",
-          days,
-          budget,
-          groupSize,
-          sourceType: "AI",
-          contentJson: content,
+      await prisma.itinerary.findUnique({
+        where: {
+          id: itineraryId,
         },
       });
 
-    const request = await createRequest(userId, itinerary.id);
+    if (!itinerary) {
+      return res.status(404).json({
+        message: "Itinerary not found",
+      });
+    }
 
-      await createNotification(
+    const request =
+      await createRequest(
         userId,
-        "Request Submitted",
-        "Your itinerary request has been submitted successfully."
+        itineraryId
       );
 
-      res.json(request);
+    await createNotification(
+      userId,
+      "Request Submitted",
+      "Your itinerary request has been submitted successfully."
+    );
+
+    res.json(request);
+
   } catch (err: any) {
 
     res.status(400).json({
       message:
-        err.message || "Error creating request",
+        err.message ||
+        "Error creating request",
     });
 
   }

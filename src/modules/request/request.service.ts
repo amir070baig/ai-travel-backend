@@ -5,6 +5,20 @@ export const createRequest = async (
   itineraryId: string
 ) => {
 
+  const existingRequest =
+    await prisma.request.findFirst({
+      where: {
+        userId,
+        itineraryId,
+      },
+    });
+
+  if (existingRequest) {
+    throw new Error(
+      "You have already submitted a request for this itinerary."
+    );
+  }
+
   return prisma.request.create({
     data: {
       userId,

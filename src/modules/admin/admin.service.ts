@@ -2,7 +2,7 @@ import { prisma } from "../../shared/prisma/client";
 import { createBooking } from "../booking/booking.service";
 import { sendEmail } from "../../shared/email";
 
-export const approveRequest = async (requestId: string) => {
+export const approveRequest = async (requestId: string, finalPrice: number) => {
 
   const request = await prisma.request.findUnique({
     where: { id: requestId },
@@ -20,6 +20,7 @@ export const approveRequest = async (requestId: string) => {
     where: { id: requestId },
     data: {
       status: "APPROVED",
+      finalPrice,
     },
   });
 
