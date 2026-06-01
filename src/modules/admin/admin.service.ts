@@ -24,6 +24,12 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     },
   });
 
+  console.log(
+    "APPROVE START",
+    requestId,
+    finalPrice
+  );
+
 
   const updatedRequest = await prisma.request.findUnique({
     where: {
@@ -90,6 +96,9 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
       Math.max(499, calculatedAdvance)
     );
 
+    console.log(
+      "CREATING BOOKING"
+    );
     await prisma.booking.create({
       data: {
         userId: request.userId,
@@ -101,6 +110,9 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
           request.itinerary.groupSize,
       },
     });
+    console.log(
+      "BOOKING CREATED"
+    );
 
   }
 
