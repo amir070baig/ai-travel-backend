@@ -54,6 +54,14 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
         </p>
 
         <p>
+          Final Package Price: ₹${finalPrice}
+        </p>
+
+        <p>
+          Please log in to complete your advance payment and reserve your personalized travel package.
+        </p>
+
+        <p>
           Our travel team will contact you shortly.
         </p>
 
@@ -75,12 +83,7 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
 
   if (!existingBooking) {
 
-    const budgetValue = Number(
-      request.itinerary.budget.replace(/[^\d]/g, "")
-    );
-
-    const calculatedAdvance =
-      Math.floor(budgetValue * 0.15);
+    const calculatedAdvance = Math.floor(finalPrice * 0.30);
 
     const advanceAmount = Math.min(
       5000,
@@ -92,7 +95,7 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
         userId: request.userId,
         itineraryId: request.itineraryId,
         requestId: request.id,
-        status: "CONFIRMED",
+        status: "PENDING_PAYMENT",
         advanceAmount,
         travelers:
           request.itinerary.groupSize,

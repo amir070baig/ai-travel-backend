@@ -79,7 +79,7 @@ export const acceptRevision = async (req: Request, res: Response) => {
     const updatedRequest = await prisma.request.update({
       where: { id: requestId },
       data: {
-        status: "APPROVED",
+        status: "UNDER_REVIEW",
         revisionStatus: "ACCEPTED_BY_USER"
       },
     });
