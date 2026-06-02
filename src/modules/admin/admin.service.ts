@@ -3,7 +3,6 @@ import { createBooking } from "../booking/booking.service";
 import { sendEmail } from "../../shared/email";
 
 export const approveRequest = async (requestId: string, finalPrice: number) => {
-
   const request = await prisma.request.findUnique({
     where: { id: requestId },
     include: {
@@ -24,18 +23,12 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     },
   });
 
-  console.log(
-    "APPROVE START",
-    requestId,
-    finalPrice
-  );
-
+  console.log("APPROVE START", requestId, finalPrice);
 
   const updatedRequest = await prisma.request.findUnique({
     where: {
       id: requestId,
     },
-
     include: {
       user: true,
       itinerary: true,
@@ -43,13 +36,9 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
   });
 
   if (updatedRequest?.user?.email) {
-
     await sendEmail({
       to: updatedRequest.user.email,
-
-      subject:
-        "Your Travel Request Has Been Approved ✅",
-
+      subject: "Your Travel Request Has Been Approved ✅",
       html: `
         <h1>
           Request Approved
@@ -76,44 +65,31 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
         </p>
       `,
     });
-
   }
 
-  
   // ✅ prevent duplicate bookings
   const existingBooking = await prisma.booking.findFirst({
     where: {
-      requestId: request.id,
+      requestId,
     },
   });
 
-  if (!existingBooking) {
-
+  if (!existingBooking && updatedRequest) {
     const calculatedAdvance = Math.floor(finalPrice * 0.30);
+    const advanceAmount = Math.min(5000, Math.max(499, calculatedAdvance));
 
-    const advanceAmount = Math.min(
-      5000,
-      Math.max(499, calculatedAdvance)
-    );
-
-    console.log(
-      "CREATING BOOKING"
-    );
+    console.log("CREATING BOOKING");
     await prisma.booking.create({
       data: {
-        userId: request.userId,
-        itineraryId: request.itineraryId,
-        requestId: request.id,
+        userId: updatedRequest.userId,
+        itineraryId: updatedRequest.itineraryId,
+        requestId,
         status: "PENDING_PAYMENT",
         advanceAmount,
-        travelers:
-          request.itinerary.groupSize,
+        travelers: updatedRequest.itinerary.groupSize,
       },
     });
-    console.log(
-      "BOOKING CREATED"
-    );
-
+    console.log("BOOKING CREATED");
   }
 
   return {

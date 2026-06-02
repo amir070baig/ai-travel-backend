@@ -168,3 +168,50 @@ export const updateBookingStatus = async (
     });
   }
 };
+
+
+export const updateTravelDate = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const idParam = req.params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
+
+    const { travelDate } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "Invalid booking id",
+      });
+    }
+
+    if (!travelDate) {
+      return res.status(400).json({
+        message: "travelDate is required",
+      });
+    }
+
+    const booking =
+      await prisma.booking.update({
+        where: { id },
+
+        data: {
+          travelDate: new Date(
+            travelDate
+          ),
+        },
+      });
+
+    res.json(booking);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message:
+        "Failed to update travel date",
+    });
+
+  }
+};
