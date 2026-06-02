@@ -45,6 +45,7 @@ model Request {
   itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
   revisionStatus  String?
   finalPrice Int?
+  messages RequestMessage[]
 }
 
 model Booking {
@@ -118,6 +119,15 @@ model Lead {
   status    String @default("NEW")
   notes     String?
   createdAt DateTime @default(now())
+}
+
+model RequestMessage {
+  id         String   @id @default(cuid())
+  requestId  String
+  request    Request  @relation(fields: [requestId], references: [id])
+  senderType String
+  message    String
+  createdAt  DateTime @default(now())
 }
 
 enum RequestStatus {
