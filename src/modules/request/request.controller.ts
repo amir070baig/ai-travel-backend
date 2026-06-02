@@ -155,8 +155,15 @@ export const sendMessage = async (
       });
     }
 
+    const currentUser =
+      await prisma.user.findUnique({
+        where: {
+          id: (req as any).user.userId,
+        },
+      });
+
     const senderType =
-      (req as any).user.role === "ADMIN"
+      currentUser?.role === "ADMIN"
         ? "ADMIN"
         : "USER";
 
