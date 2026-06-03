@@ -76,6 +76,14 @@ export const sendRevision = async (req: Request, res: Response) => {
       });
     }
 
+    await prisma.requestMessage.create({
+      data: {
+        requestId,
+        senderType: "ADMIN",
+        message,
+      },
+    });
+
     const request = await prisma.request.update({
       where: {
         id: requestId,
