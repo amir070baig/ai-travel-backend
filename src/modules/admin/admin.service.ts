@@ -10,7 +10,12 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     },
   });
 
-  if (!request || request.status !== "UNDER_REVIEW") {
+  if (
+    !request ||
+    !["UNDER_REVIEW", "REVISION_SENT"].includes(
+      request.status
+    )
+  ) {
     throw new Error("Invalid request state");
   }
 

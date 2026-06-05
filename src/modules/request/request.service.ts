@@ -29,9 +29,7 @@ export const createRequest = async (
 
 };
 
-export const getUserRequests = async (
-  userId: string
-) => {
+export const getUserRequests = async (userId: string) => {
 
   return prisma.request.findMany({
     where: {
