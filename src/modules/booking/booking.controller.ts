@@ -85,8 +85,7 @@ export const getMyBookings = async (req: Request, res: Response) => {
       where: { userId },
       include: {
         tour: true,
-        request: true,
-        itinerary: true,  
+        itinerary: true,
       },
       orderBy: { createdAt: "desc" },
     });
