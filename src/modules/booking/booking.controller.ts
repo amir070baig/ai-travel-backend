@@ -86,6 +86,7 @@ export const getMyBookings = async (req: Request, res: Response) => {
       include: {
         tour: true,
         itinerary: true,
+        request: true,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -129,6 +130,7 @@ export const updateBookingStatus = async (
 
         include: {
           user: true,
+          request: true,
         },
       });
 

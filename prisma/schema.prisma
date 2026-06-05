@@ -45,6 +45,7 @@ model Request {
   itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
   revisionStatus  String?
   finalPrice Int?
+  booking Booking?
   messages RequestMessage[]
 }
 
@@ -54,13 +55,14 @@ model Booking {
   itineraryId   String? 
   tourId   String?
   tour     Tour? @relation(fields: [tourId], references: [id])
-  requestId     String?
+  requestId String? @unique
   advanceAmount Int @default(0)
   status        String   @default("PENDING")
   createdAt     DateTime @default(now())
 
   user        User       @relation(fields: [userId], references: [id])
   itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
+  request Request? @relation(fields: [requestId], references: [id])
   paymentStatus String @default("PENDING")
   paymentId     String?
   orderId       String?
