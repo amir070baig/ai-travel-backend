@@ -5,10 +5,7 @@ import { getUserRequests } from "./request.service";
 import { createNotification } from "../notification/notification.service";
 import {  createRequestMessage, getRequestMessages,} from "./request-message.service";
 
-export const submitRequest = async (
-  req: Request,
-  res: Response
-) => {
+export const submitRequest = async (req: Request, res: Response) => {
   try {
 
     const { itineraryId } = req.body;

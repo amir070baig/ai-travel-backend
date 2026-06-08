@@ -20,15 +20,25 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
   }
 
   // ✅ approve request
+  const effectivePrice =
+    finalPrice ||
+    Number(
+      request.itinerary.budget.replace(/[^\d]/g, "")
+    );
+
   await prisma.request.update({
     where: { id: requestId },
     data: {
       status: "APPROVED",
-      finalPrice,
+      finalPrice: effectivePrice,
     },
   });
 
-  console.log("APPROVE START", requestId, finalPrice);
+  console.log(
+    "APPROVE START",
+    requestId,
+    effectivePrice
+  );
 
   const updatedRequest = await prisma.request.findUnique({
     where: {
@@ -54,7 +64,7 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
         </p>
 
         <p>
-          Final Package Price: ₹${finalPrice}
+          Final Package Price: ₹${effectivePrice}
         </p>
 
         <p>
@@ -80,7 +90,7 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
   });
 
   if (!existingBooking && updatedRequest) {
-    const calculatedAdvance = Math.floor(finalPrice * 0.30);
+    const calculatedAdvance = Math.floor(effectivePrice * 0.30);
     const advanceAmount = Math.min(5000, Math.max(499, calculatedAdvance));
 
     console.log("CREATING BOOKING");

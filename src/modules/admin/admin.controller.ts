@@ -14,11 +14,11 @@ import {
 export const approve = async (req: Request, res: Response) => {
   try {
     const { requestId, finalPrice } = req.body;
-    if (!finalPrice || finalPrice <= 0) {
-      return res.status(400).json({
-        message: "Final price is required",
-      });
-    }
+    // if (!finalPrice || finalPrice <= 0) {
+    //   return res.status(400).json({
+    //     message: "Final price is required",
+    //   });
+    // }
 
     if (!requestId) {
       return res.status(400).json({
@@ -26,7 +26,12 @@ export const approve = async (req: Request, res: Response) => {
       });
     }
 
-    const result = await approveRequest(requestId, Number(finalPrice));
+    const result = await approveRequest(
+      requestId,
+      finalPrice
+        ? Number(finalPrice)
+        : 0
+    );
 
     return res.status(200).json(result);
   } catch (error: any) {
