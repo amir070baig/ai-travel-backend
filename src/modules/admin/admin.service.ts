@@ -27,8 +27,18 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     );
 
   console.log(
-    "ITINERARY BUDGET",
+    "ITINERARY BUDGET VALUE",
     request.itinerary.budget
+  );
+
+  console.log(
+    "ITINERARY BUDGET TYPE",
+    typeof request.itinerary.budget
+  );
+
+  console.log(
+    "FINAL PRICE RECEIVED",
+    finalPrice
   );
 
   console.log(
