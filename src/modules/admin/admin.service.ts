@@ -26,6 +26,16 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
       request.itinerary.budget.replace(/[^\d]/g, "")
     );
 
+  console.log(
+    "ITINERARY BUDGET",
+    request.itinerary.budget
+  );
+
+  console.log(
+    "EFFECTIVE PRICE",
+    effectivePrice
+  );
+
   await prisma.request.update({
     where: { id: requestId },
     data: {
@@ -92,6 +102,16 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
   if (!existingBooking && updatedRequest) {
     const calculatedAdvance = Math.floor(effectivePrice * 0.30);
     const advanceAmount = Math.min(5000, Math.max(499, calculatedAdvance));
+
+    console.log(
+      "BOOKING PRICE",
+      effectivePrice
+    );
+
+    console.log(
+      "ADVANCE AMOUNT",
+      advanceAmount
+    );
 
     console.log("CREATING BOOKING");
     await prisma.booking.create({
