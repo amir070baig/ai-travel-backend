@@ -29,7 +29,7 @@ export const generateItinerary = async (data: {
   - Travelers: ${groupSize}
   - Travel Style: ${travelStyle}
   - Trip Type: ${tripType}
-  - Interests: ${interests}
+  - Interests: ${interests || "General sightseeing"}
 
   IMPORTANT REQUIREMENTS:
 
