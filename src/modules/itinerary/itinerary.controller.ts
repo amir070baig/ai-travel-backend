@@ -35,6 +35,15 @@ export const saveItineraryController = async (req: Request, res: Response) => {
     const userId = (req as any).user.userId;
     const { content, days, budget, groupSize } = req.body;
 
+    console.log({
+      content,
+      days,
+      budget,
+      groupSize,
+      daysType: typeof days,
+      groupSizeType: typeof groupSize,
+    });
+
     const itinerary = await prisma.itinerary.create({
       data: {
         userId,
@@ -49,6 +58,15 @@ export const saveItineraryController = async (req: Request, res: Response) => {
 
     res.json(itinerary);
   } catch (err) {
-    res.status(500).json({ message: "Error saving itinerary" });
+
+    console.error(
+      "SAVE ITINERARY ERROR:",
+      err
+    );
+
+    res.status(500).json({
+      message: "Error saving itinerary"
+    });
+
   }
 };
