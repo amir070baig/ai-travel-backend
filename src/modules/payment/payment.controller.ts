@@ -6,6 +6,7 @@ import { createNotification } from "../notification/notification.service";
 import { sendEmail } from "../../shared/email"; // Ensure this import matches your project structure
 // 1. Import payment validation schemas
 import { createOrderSchema, verifyPaymentSchema } from "../../validations/payment.validation";
+import { notifyAdmins } from "../notification/notification.service";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
@@ -109,8 +110,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
 
     await createNotification(
       bookingData.userId,
-      "Payment Successful",
-      "Your advance payment has been received successfully."
+      "Booking Confirmed 🎉",
+      "Your booking has been confirmed successfully."
     );
 
     // === Email Logic ===
@@ -122,6 +123,11 @@ export const verifyPayment = async (req: Request, res: Response) => {
         user: true,
       },
     });
+
+    await notifyAdmins(
+      "Payment Received 💰",
+      `${booking?.user?.email} completed advance payment for booking.`
+    );
 
     if (booking?.user?.email) {
       await sendEmail({

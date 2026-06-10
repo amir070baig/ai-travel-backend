@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { createRequest } from "./request.service";
 import { prisma } from "../../shared/prisma/client";
 import { getUserRequests } from "./request.service";
-import { createNotification } from "../notification/notification.service";
+import { createNotification, notifyAdmins } from "../notification/notification.service";
 import {  createRequestMessage, getRequestMessages,} from "./request-message.service";
 
 export const submitRequest = async (req: Request, res: Response) => {
@@ -118,10 +118,7 @@ export const rejectRevision = async (req: Request, res: Response) => {
   }
 };
 
-export const sendMessage = async (
-  req: Request,
-  res: Response
-) => {
+export const sendMessage = async (req: Request, res: Response) => {
 
   try {
 
@@ -170,6 +167,30 @@ export const sendMessage = async (
         senderType,
         message
       );
+
+    if (senderType === "USER") {
+
+      await notifyAdmins(
+        "Customer Replied 💬",
+        `${currentUser?.email} replied to a travel request.`
+      );
+
+    } else {
+
+      await createNotification(
+        request.userId,
+        "New Message From Travel Team 💬",
+        "You have received a new message regarding your itinerary."
+      );
+
+      await notifyAdmins(
+        "New Travel Request 🆕",
+        "A customer submitted a new itinerary for review."
+      );
+
+    }
+
+    res.json(result);
 
     res.json(result);
 

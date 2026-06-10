@@ -1,6 +1,7 @@
 import { prisma } from "../../shared/prisma/client";
 import { createBooking } from "../booking/booking.service";
 import { sendEmail } from "../../shared/email";
+import { createNotification } from "../notification/notification.service";
 
 export const approveRequest = async (requestId: string, finalPrice: number) => {
   const request = await prisma.request.findUnique({
@@ -26,26 +27,6 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
       request.itinerary.budget.replace(/[^\d]/g, "")
     );
 
-  console.log(
-    "ITINERARY BUDGET VALUE",
-    request.itinerary.budget
-  );
-
-  console.log(
-    "ITINERARY BUDGET TYPE",
-    typeof request.itinerary.budget
-  );
-
-  console.log(
-    "FINAL PRICE RECEIVED",
-    finalPrice
-  );
-
-  console.log(
-    "EFFECTIVE PRICE",
-    effectivePrice
-  );
-
   await prisma.request.update({
     where: { id: requestId },
     data: {
@@ -54,10 +35,10 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     },
   });
 
-  console.log(
-    "APPROVE START",
-    requestId,
-    effectivePrice
+  await createNotification(
+    request.userId,
+    "Package Approved ✅",
+    `Your personalized travel package is ready. Final package price: ₹${effectivePrice}`
   );
 
   const updatedRequest = await prisma.request.findUnique({
@@ -113,17 +94,6 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     const calculatedAdvance = Math.floor(effectivePrice * 0.30);
     const advanceAmount = Math.min(5000, Math.max(499, calculatedAdvance));
 
-    console.log(
-      "BOOKING PRICE",
-      effectivePrice
-    );
-
-    console.log(
-      "ADVANCE AMOUNT",
-      advanceAmount
-    );
-
-    console.log("CREATING BOOKING");
     await prisma.booking.create({
       data: {
         userId: updatedRequest.userId,
@@ -135,6 +105,12 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
       },
     });
     console.log("BOOKING CREATED");
+
+    await createNotification(
+      updatedRequest.userId,
+      "Booking Created 📅",
+      "Please select your travel date and complete advance payment."
+    );
   }
 
   return {
