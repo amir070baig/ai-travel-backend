@@ -129,6 +129,36 @@ export const verifyPayment = async (req: Request, res: Response) => {
       `${booking?.user?.email} completed advance payment for booking.`
     );
 
+    const admin = await prisma.user.findFirst({
+      where: {
+        role: "ADMIN",
+      },
+    });
+
+    if (admin?.email) {
+
+      await sendEmail({
+        to: admin.email,
+
+        subject: "Payment Received 💰",
+
+        html: `
+          <h1>
+            Payment Received
+          </h1>
+
+          <p>
+            ${booking?.user?.email} completed an advance payment.
+          </p>
+
+          <p>
+            Please review the booking details in the admin dashboard.
+          </p>
+        `,
+      });
+
+    }
+
     if (booking?.user?.email) {
       await sendEmail({
         to: booking.user.email,

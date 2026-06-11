@@ -106,6 +106,30 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     });
     console.log("BOOKING CREATED");
 
+    if (updatedRequest?.user?.email) {
+
+      await sendEmail({
+        to: updatedRequest.user.email,
+
+        subject: "Booking Created 📅",
+
+        html: `
+          <h1>
+            Booking Created
+          </h1>
+
+          <p>
+            Your personalized travel package is ready.
+          </p>
+
+          <p>
+            Please log in and complete your advance payment.
+          </p>
+        `,
+      });
+
+    }
+
     await createNotification(
       updatedRequest.userId,
       "Booking Created 📅",

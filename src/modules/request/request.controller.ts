@@ -46,10 +46,70 @@ export const submitRequest = async (req: Request, res: Response) => {
       "Your itinerary request has been submitted successfully."
     );
 
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (user?.email) {
+
+      await sendEmail({
+        to: user.email,
+
+        subject: "Request Submitted 📋",
+
+        html: `
+          <h1>
+            Request Submitted
+          </h1>
+
+          <p>
+            Your itinerary request has been submitted successfully.
+          </p>
+
+          <p>
+            Our travel team will review it shortly.
+          </p>
+        `,
+      });
+
+    }
+
     await notifyAdmins(
       "New Travel Request 🆕",
       "A customer submitted a new itinerary for review."
     );
+
+    const admin = await prisma.user.findFirst({
+      where: {
+        role: "ADMIN",
+      },
+    });
+
+    if (admin?.email) {
+
+      await sendEmail({
+        to: admin.email,
+
+        subject: "New Travel Request 🆕",
+
+        html: `
+          <h1>
+            New Travel Request
+          </h1>
+
+          <p>
+            A customer has submitted a new itinerary for review.
+          </p>
+
+          <p>
+            Please log in to the admin dashboard.
+          </p>
+        `,
+      });
+
+    }
 
     res.json(request);
 
@@ -213,6 +273,44 @@ export const sendMessage = async (req: Request, res: Response) => {
         "New Message From Travel Team 💬",
         "You have received a new message regarding your itinerary."
       );
+
+      const customer = await prisma.user.findUnique({
+        where: {
+          id: request.userId,
+        },
+      });
+
+      if (customer?.email) {
+
+        await sendEmail({
+          to: customer.email,
+
+          subject: "New Message From Travel Team 💬",
+
+          html: `
+            <h1>
+              New Message From Travel Team
+            </h1>
+
+            <p>
+              You have received a new message regarding your itinerary.
+            </p>
+
+            <p>
+              Message:
+            </p>
+
+            <p>
+              ${message}
+            </p>
+
+            <p>
+              Please log in to continue the discussion.
+            </p>
+          `,
+        });
+
+      }
 
     }
 
