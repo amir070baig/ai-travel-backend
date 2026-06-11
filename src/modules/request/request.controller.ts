@@ -3,7 +3,9 @@ import { createRequest } from "./request.service";
 import { prisma } from "../../shared/prisma/client";
 import { getUserRequests } from "./request.service";
 import { createNotification, notifyAdmins } from "../notification/notification.service";
-import {  createRequestMessage, getRequestMessages,} from "./request-message.service";
+import { createRequestMessage, getRequestMessages,} from "./request-message.service";
+import { sendEmail } from "../../shared/email";
+
 
 export const submitRequest = async (req: Request, res: Response) => {
   try {
@@ -42,6 +44,11 @@ export const submitRequest = async (req: Request, res: Response) => {
       userId,
       "Request Submitted",
       "Your itinerary request has been submitted successfully."
+    );
+
+    await notifyAdmins(
+      "New Travel Request 🆕",
+      "A customer submitted a new itinerary for review."
     );
 
     res.json(request);
@@ -121,14 +128,10 @@ export const rejectRevision = async (req: Request, res: Response) => {
 export const sendMessage = async (req: Request, res: Response) => {
 
   try {
-
     const userId =
       (req as any).user.userId;
 
-    const {
-      requestId,
-      message,
-    } = req.body;
+    const {requestId, message,} = req.body;
 
     if (!message) {
       return res.status(400).json({
@@ -175,6 +178,34 @@ export const sendMessage = async (req: Request, res: Response) => {
         `${currentUser?.email} replied to a travel request.`
       );
 
+      const admin = await prisma.user.findFirst({
+        where: {
+          role: "ADMIN",
+        },
+      });
+
+      if (admin?.email) {
+        await sendEmail({
+          to: admin.email,
+          subject: "Customer Replied 💬",
+          html: `
+            <h1>New Customer Reply</h1>
+
+            <p>
+              ${currentUser?.email} sent a new message.
+            </p>
+
+            <p>
+              Message:
+            </p>
+
+            <p>
+              ${message}
+            </p>
+          `,
+        });
+      }
+
     } else {
 
       await createNotification(
@@ -183,14 +214,7 @@ export const sendMessage = async (req: Request, res: Response) => {
         "You have received a new message regarding your itinerary."
       );
 
-      await notifyAdmins(
-        "New Travel Request 🆕",
-        "A customer submitted a new itinerary for review."
-      );
-
     }
-
-    res.json(result);
 
     res.json(result);
 
@@ -205,11 +229,7 @@ export const sendMessage = async (req: Request, res: Response) => {
 
 };
 
-export const getMessages = async (
-  req: Request,
-  res: Response
-) => {
-
+export const getMessages = async (req: Request,res: Response) => {
   try {
 
     const { requestId } =
