@@ -33,6 +33,10 @@ export const getMyItinerariesController = async (req: Request, res: Response) =>
 export const saveItineraryController = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.userId;
+    console.log(
+      "SAVE BODY",
+      req.body
+    );
     const {
       content,
       days,
