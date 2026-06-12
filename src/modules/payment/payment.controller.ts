@@ -111,7 +111,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
     await createNotification(
       bookingData.userId,
       "Booking Confirmed 🎉",
-      "Your booking has been confirmed successfully."
+      "Your booking has been confirmed successfully.",
+      "/my-requests"
     );
 
     // === Email Logic ===

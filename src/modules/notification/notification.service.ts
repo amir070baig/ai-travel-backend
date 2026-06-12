@@ -6,6 +6,13 @@ export const createNotification = async (
   message: string,
   link?: string
 ) => {
+
+  console.log(
+    "CREATE NOTIFICATION",
+    title,
+    link
+  );
+
   return prisma.notification.create({
     data: {
       userId,

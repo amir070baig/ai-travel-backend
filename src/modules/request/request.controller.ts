@@ -154,7 +154,8 @@ export const acceptRevision = async (req: Request, res: Response) => {
     await createNotification(
       updatedRequest.userId,
       "Revision Accepted",
-      "You accepted the updated itinerary revision."
+      "You accepted the updated itinerary revision.",
+      "/my-requests"
     );
 
     res.json({ message: "Revision accepted" });
@@ -178,7 +179,8 @@ export const rejectRevision = async (req: Request, res: Response) => {
     await createNotification(
       updatedRequest.userId,
       "Revision Rejected",
-      "Your itinerary revision was sent back for further review."
+      "Your itinerary revision was sent back for further review.",
+      "/my-requests"
     );
 
     res.json({ message: "Revision rejected" });
@@ -274,7 +276,8 @@ export const sendMessage = async (req: Request, res: Response) => {
       await createNotification(
         request.userId,
         "New Message From Travel Team 💬",
-        "You have received a new message regarding your itinerary."
+        "You have received a new message regarding your itinerary.",
+        "/my-requests"
       );
 
       const customer = await prisma.user.findUnique({
