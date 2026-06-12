@@ -114,6 +114,7 @@ export const sendRevision = async (req: Request, res: Response) => {
         userId: request.userId,
         title: "Revision Requested ✏️",
         message,
+        link: "/my-requests",
       },
     });
 
