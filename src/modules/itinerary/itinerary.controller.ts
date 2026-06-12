@@ -47,7 +47,7 @@ export const saveItineraryController = async (req: Request, res: Response) => {
     } = req.body;
 
     const itineraryTitle =
-      `Agra ${days}-Day ${travelStyle} Journey`;
+      `Agra ${days}-Day ${travelStyle || "Personalized"} Journey`;
 
     const itinerary = await prisma.itinerary.create({
       data: {
