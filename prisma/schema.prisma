@@ -25,6 +25,7 @@ model Itinerary {
   city        String
   days        Int
   budget      String
+  title       String?
   groupSize   Int
   contentJson String
   version     Int      @default(1)
