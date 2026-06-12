@@ -126,7 +126,8 @@ export const verifyPayment = async (req: Request, res: Response) => {
 
     await notifyAdmins(
       "Payment Received 💰",
-      `${booking?.user?.email} completed advance payment for booking.`
+      `${booking?.user?.email} completed advance payment.`,
+      "/admin"
     );
 
     const admin = await prisma.user.findFirst({

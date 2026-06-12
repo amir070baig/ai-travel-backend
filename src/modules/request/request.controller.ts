@@ -43,7 +43,8 @@ export const submitRequest = async (req: Request, res: Response) => {
     await createNotification(
       userId,
       "Request Submitted",
-      "Your itinerary request has been submitted successfully."
+      "Your itinerary request has been submitted successfully.",
+      "/my-requests"
     );
 
     const user = await prisma.user.findUnique({
@@ -78,7 +79,8 @@ export const submitRequest = async (req: Request, res: Response) => {
 
     await notifyAdmins(
       "New Travel Request 🆕",
-      "A customer submitted a new itinerary for review."
+      "A customer submitted a new itinerary for review.",
+      "/admin"
     );
 
     const admin = await prisma.user.findFirst({
@@ -235,7 +237,8 @@ export const sendMessage = async (req: Request, res: Response) => {
 
       await notifyAdmins(
         "Customer Replied 💬",
-        `${currentUser?.email} replied to a travel request.`
+        `${currentUser?.email} replied to a travel request.`,
+        "/admin"
       );
 
       const admin = await prisma.user.findFirst({
