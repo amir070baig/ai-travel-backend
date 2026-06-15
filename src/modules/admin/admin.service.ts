@@ -38,7 +38,8 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
   await createNotification(
     request.userId,
     "Package Approved ✅",
-    `Your personalized travel package is ready. Final package price: ₹${effectivePrice}`
+    `Your personalized travel package is ready. Final package price: ₹${effectivePrice}`,
+    "/my-requests"
   );
 
   const updatedRequest = await prisma.request.findUnique({
