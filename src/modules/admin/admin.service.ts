@@ -134,7 +134,8 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
     await createNotification(
       updatedRequest.userId,
       "Booking Created 📅",
-      "Please select your travel date and complete advance payment."
+      "Please select your travel date and complete advance payment.",
+      "/my-requests"
     );
   }
 
