@@ -146,17 +146,19 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
 
 
 export const rejectRequest = async (requestId: string) => {
-  // Fetch request along with user email before updating
+
   const request = await prisma.request.findUnique({
     where: { id: requestId },
     include: { user: true },
   });
 
-  if (!request || request.status !== "UNDER_REVIEW") {
+  if (
+    !request ||
+    !["UNDER_REVIEW", "REVISION_SENT"].includes(request.status)
+  ) {
     throw new Error("Invalid request state");
   }
 
-  // Send the rejection email
   if (request.user?.email) {
     await sendEmail({
       to: request.user.email,
@@ -164,15 +166,26 @@ export const rejectRequest = async (requestId: string) => {
       html: `
         <h1>Request Update</h1>
         <p>We regret to inform you that your itinerary request has been rejected.</p>
-        <p>If you have any questions or would like to submit a new layout, please reach out to our team.</p>
+        <p>If you have any questions or would like to submit a new request, please reach out to our team.</p>
         <p>Thank you for using AI Travel Planner.</p>
       `,
-    }).catch(err => console.error("Rejection email failed:", err));
+    }).catch(err =>
+      console.error("Rejection email failed:", err)
+    );
   }
+
+  await createNotification(
+    request.userId,
+    "Request Rejected ❌",
+    "Your travel request could not be approved. Please review the details or submit a new request.",
+    "/my-requests"
+  );
 
   return prisma.request.update({
     where: { id: requestId },
-    data: { status: "REJECTED" },
+    data: {
+      status: "REJECTED",
+    },
   });
 };
 
