@@ -80,3 +80,37 @@ export const saveItineraryController = async (req: Request, res: Response) => {
 
   }
 };
+
+export const deleteItineraryController = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.userId;
+
+    const rawId = req.params.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
+
+    if (!id) {
+      return res.status(400).json({ message: "Invalid itinerary id" });
+    }
+
+    const itinerary = await prisma.itinerary.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    await prisma.itinerary.delete({
+      where: { id },
+    });
+
+    return res.json({ message: "Itinerary deleted successfully" });
+
+  } catch (err) {
+    console.error("DELETE ITINERARY ERROR:", err);
+    return res.status(500).json({ message: "Error deleting itinerary" });
+  }
+};

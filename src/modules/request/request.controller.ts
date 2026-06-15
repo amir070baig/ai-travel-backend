@@ -127,40 +127,6 @@ export const submitRequest = async (req: Request, res: Response) => {
 };
 
 
-export const deleteItineraryController = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.userId;
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-
-    if (!id) {
-      return res.status(400).json({ message: "Invalid itinerary id" });
-    }
-
-    // 🔒 important: ensure user owns this itinerary
-    const itinerary = await prisma.itinerary.findFirst({
-      where: {
-        id,
-        userId,
-      },
-    });
-
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-
-    await prisma.itinerary.delete({
-      where: { id },
-    });
-
-    return res.json({ message: "Itinerary deleted successfully" });
-
-  } catch (err) {
-    console.error("DELETE ITINERARY ERROR:", err);
-    res.status(500).json({ message: "Error deleting itinerary" });
-  }
-};
-
-
 export const getAllRequests = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.userId;
