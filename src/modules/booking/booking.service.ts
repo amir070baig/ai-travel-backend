@@ -75,12 +75,12 @@ export const createBooking = async ({
   if (user?.email) {
     await sendEmail({
       to: user.email,
-      subject: "Booking Confirmation - AI Travel Planner",
+      subject: "Booking Confirmation - TourGen",
       html: `
         <h1>Booking Confirmed ✅</h1>
         <p>Your booking has been received successfully.</p>
         <p>Our travel team will contact you shortly.</p>
-        <p>Thank you for choosing AI Travel Planner.</p>
+        <p>Thank you for choosing TourGen.</p>
       `,
     });
   }

@@ -34,7 +34,7 @@ export const generatePDF = async (
     doc
       .fontSize(24)
       .fillColor("#2563eb")
-      .text("AI Travel Planner", {
+      .text("TourGen", {
         align: "center",
       });
 

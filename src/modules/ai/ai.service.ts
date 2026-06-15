@@ -60,7 +60,7 @@ export const generateItinerary = async (data: {
   8. Include curated local experiences and premium cultural recommendations.
   9. Avoid generic internet-travel-blog style suggestions.
   10. Provide realistic approximate budget guidance without guaranteeing exact pricing.
-  11. Provide concierge-style travel guidance instead of DIY negotiation advice.
+  11. Provide -style travel guidance instead of DIY negotiation advice.
   12. Include hidden gems when appropriate.
   13. Tailor recommendations to travel style.
   14. The itinerary should feel like a premium travel concierge experience rather than a generic AI travel guide.

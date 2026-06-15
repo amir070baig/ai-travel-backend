@@ -78,7 +78,7 @@ export const approveRequest = async (requestId: string, finalPrice: number) => {
         </p>
 
         <p>
-          Thank you for choosing AI Travel Planner.
+          Thank you for choosing TourGen.
         </p>
       `,
     });
@@ -167,7 +167,7 @@ export const rejectRequest = async (requestId: string) => {
         <h1>Request Update</h1>
         <p>We regret to inform you that your itinerary request has been rejected.</p>
         <p>If you have any questions or would like to submit a new request, please reach out to our team.</p>
-        <p>Thank you for using AI Travel Planner.</p>
+        <p>Thank you for using TourGen.</p>
       `,
     }).catch(err =>
       console.error("Rejection email failed:", err)

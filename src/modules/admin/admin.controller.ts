@@ -129,7 +129,7 @@ export const sendRevision = async (req: Request, res: Response) => {
         <h1>Revision Requested</h1>
 
         <p>
-          Our travel concierge team reviewed your itinerary request.
+          Our travel TourGen team reviewed your itinerary request.
         </p>
 
         <p>
