@@ -171,10 +171,7 @@ export const updateBookingStatus = async (
   }
 };
 
-export const requestRefund = async (
-  req: Request,
-  res: Response
-) => {
+export const requestRefund = async (req: Request,res: Response) => {
   try {
     const idParam = req.params.id;
 
@@ -290,6 +287,98 @@ export const requestRefund = async (
     return res.status(500).json({
       message:
         "Failed to request refund",
+    });
+
+  }
+};
+
+
+export const processRefundRequest = async (req: Request, res: Response) => {
+  try {
+
+    const {
+      bookingId,
+      action,
+    } = req.body;
+
+    if (!bookingId || !action) {
+      return res.status(400).json({
+        message:
+          "bookingId and action are required",
+      });
+    }
+
+    const booking =
+      await prisma.booking.findUnique({
+        where: {
+          id: bookingId,
+        },
+      });
+
+    if (!booking) {
+      return res.status(404).json({
+        message:
+          "Booking not found",
+      });
+    }
+
+    if (
+      booking.status !==
+      "REFUND_PENDING"
+    ) {
+      return res.status(400).json({
+        message:
+          "Booking is not awaiting refund review",
+      });
+    }
+
+    if (action === "APPROVE") {
+
+      const updated =
+        await prisma.booking.update({
+          where: {
+            id: bookingId,
+          },
+          data: {
+            status: "REFUNDED",
+            refundProcessedAt:
+              new Date(),
+          },
+        });
+
+      return res.json(updated);
+    }
+
+    if (action === "REJECT") {
+
+      const updated =
+        await prisma.booking.update({
+          where: {
+            id: bookingId,
+          },
+          data: {
+            status: "CONFIRMED",
+          },
+        });
+
+      return res.json(updated);
+    }
+
+    return res.status(400).json({
+      message:
+        "Invalid action",
+    });
+
+  } catch (err) {
+
+    console.error(
+      "REFUND PROCESS ERROR:",
+      err
+    );
+
+    return res.status(500).json({
+      message:
+        "Failed to process refund",
     });
 
   }
