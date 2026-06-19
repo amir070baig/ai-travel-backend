@@ -171,6 +171,130 @@ export const updateBookingStatus = async (
   }
 };
 
+export const requestRefund = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const idParam = req.params.id;
+
+    const bookingId = Array.isArray(idParam)
+      ? idParam[0]
+      : idParam;
+
+    if (!bookingId) {
+    return res.status(400).json({
+      message: "Invalid booking id",
+    });
+  }
+    const userId = (req as any).user.userId;
+
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: {
+        request: true,
+      },
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.userId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+
+    if (booking.paymentStatus !== "PAID") {
+      if (booking.status !== "CONFIRMED") {
+        return res.status(400).json({
+          message:
+            "Only confirmed bookings can request cancellation",
+        });
+      }
+      // return res.status(400).json({
+      //   message: "Only paid bookings can request refunds",
+      // });
+    }
+
+    if (
+      booking.status === "REFUND_PENDING" ||
+      booking.status === "REFUNDED"
+    ) {
+      return res.status(400).json({
+        message:
+          "Refund request already exists",
+      });
+    }
+
+    let refundPercentage = 0;
+
+    // PRE-BUILT TOUR
+    if (booking.tourId && booking.travelDate) {
+      const hoursUntilTravel =
+        (new Date(booking.travelDate).getTime() - Date.now()) /
+        (1000 * 60 * 60);
+
+      if (hoursUntilTravel >= 72) {
+        refundPercentage = 100;
+      } else if (hoursUntilTravel >= 24) {
+        refundPercentage = 50;
+      } else {
+        refundPercentage = 0;
+      }
+    }
+
+    // AI CUSTOM TRIP
+    else {
+      refundPercentage =
+        booking.supplierBookingStarted
+          ? 0
+          : 80;
+    }
+
+    const refundAmount =
+      Math.round(
+        booking.advanceAmount *
+        (refundPercentage / 100)
+      );
+
+    const updatedBooking =
+      await prisma.booking.update({
+        where: {
+          id: booking.id,
+        },
+        data: {
+          status: "REFUND_PENDING",
+          refundRequestedAt: new Date(),
+          refundPercentage,
+          refundAmount,
+        },
+      });
+
+    return res.json({
+      message:
+        "Refund request submitted successfully",
+      booking: updatedBooking,
+    });
+
+  } catch (err) {
+
+    console.error(
+      "REFUND REQUEST ERROR:",
+      err
+    );
+
+    return res.status(500).json({
+      message:
+        "Failed to request refund",
+    });
+
+  }
+};
+
 
 export const updateTravelDate = async (
   req: Request,
