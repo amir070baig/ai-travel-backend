@@ -297,13 +297,13 @@ export const requestRefund = async (req: Request,res: Response) => {
 export const processRefundRequest = async (req: Request, res: Response) => {
   try {
 
-    const user = (req as any).user;
+    // const user = (req as any).user;
 
-    if (!user || user.role !== "ADMIN") {
-      return res.status(403).json({
-        message: "Admin access required",
-      });
-    }
+    // if (!user || user.role !== "ADMIN") {
+    //   return res.status(403).json({
+    //     message: "Admin access required",
+    //   });
+    // }
 
     const {
       bookingId,
