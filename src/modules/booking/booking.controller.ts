@@ -3,7 +3,7 @@ import { createBooking } from "./booking.service";
 import { prisma } from "../../shared/prisma/client";
 import { sendEmail } from "../../shared/email";
 import {bookingSchema} from "../../validations/booking.validation";
-import { createNotification } from "../notification/notification.service";
+import { createNotification, notifyAdmins } from "../notification/notification.service";
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -191,6 +191,8 @@ export const requestRefund = async (req: Request,res: Response) => {
       where: { id: bookingId },
       include: {
         request: true,
+        user: true,
+        tour: true,
       },
     });
 
@@ -207,24 +209,30 @@ export const requestRefund = async (req: Request,res: Response) => {
     }
 
     if (booking.paymentStatus !== "PAID") {
-      if (booking.status !== "CONFIRMED") {
-        return res.status(400).json({
-          message:
-            "Only confirmed bookings can request cancellation",
-        });
-      }
-      // return res.status(400).json({
-      //   message: "Only paid bookings can request refunds",
-      // });
+      return res.status(400).json({
+        message:
+          "Only paid bookings can request refunds",
+      });
     }
 
-    if (
-      booking.status === "REFUND_PENDING" ||
-      booking.status === "REFUNDED"
-    ) {
+    if (booking.status === "REFUND_PENDING") {
       return res.status(400).json({
         message:
           "Refund request already exists",
+      });
+    }
+
+    if (booking.status === "REFUNDED") {
+      return res.status(400).json({
+        message:
+          "Booking already refunded",
+      });
+    }
+
+    if (booking.status !== "CONFIRMED") {
+      return res.status(400).json({
+        message:
+          "Only confirmed bookings can request cancellation",
       });
     }
 
@@ -271,6 +279,42 @@ export const requestRefund = async (req: Request,res: Response) => {
           refundAmount,
         },
       });
+
+      await notifyAdmins(
+        "Refund Request Received 💰",
+        `${booking.user?.email} requested a refund.`,
+        "/admin"
+      );
+
+      const admin = await prisma.user.findFirst({
+        where: {
+          role: "ADMIN",
+        },
+      });
+
+      if (admin?.email) {
+
+        await sendEmail({
+          to: admin.email,
+
+          subject: "Refund Request Received 💰",
+
+          html: `
+            <h1>
+              Refund Request Received
+            </h1>
+
+            <p>
+              A customer has submitted a refund request.
+            </p>
+
+            <p>
+              Please review it in the admin dashboard.
+            </p>
+          `,
+        });
+
+      }
 
     return res.json({
       message:
