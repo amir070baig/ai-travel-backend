@@ -3,6 +3,7 @@ import { createBooking } from "./booking.service";
 import { prisma } from "../../shared/prisma/client";
 import { sendEmail } from "../../shared/email";
 import {bookingSchema} from "../../validations/booking.validation";
+import { createNotification } from "../notification/notification.service";
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -296,6 +297,14 @@ export const requestRefund = async (req: Request,res: Response) => {
 export const processRefundRequest = async (req: Request, res: Response) => {
   try {
 
+    const user = (req as any).user;
+
+    if (!user || user.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
     const {
       bookingId,
       action,
@@ -344,7 +353,48 @@ export const processRefundRequest = async (req: Request, res: Response) => {
             refundProcessedAt:
               new Date(),
           },
+          include: {
+            user: true,
+          },
         });
+
+        await createNotification(
+          updated.userId,
+          "Refund Approved ✅",
+          `Your refund request has been approved. Refund Amount: ₹${updated.refundAmount ?? 0}`,
+          "/my-requests"
+        );
+
+        if (updated.user?.email) {
+
+          await sendEmail({
+            to: updated.user.email,
+
+            subject: "Refund Approved ✅",
+
+            html: `
+              <h1>Refund Approved</h1>
+
+              <p>Your refund request has been approved.</p>
+
+              <p>
+                Refund Amount:
+                ₹${updated.refundAmount ?? 0}
+              </p>
+
+              <p>
+                The refund has been initiated and may take
+                7-10 business days depending on your bank
+                and payment provider.
+              </p>
+
+              <p>
+                Thank you for choosing TourGen.
+              </p>
+            `,
+          });
+
+        }
 
       return res.json(updated);
     }
@@ -359,7 +409,45 @@ export const processRefundRequest = async (req: Request, res: Response) => {
           data: {
             status: "CONFIRMED",
           },
+          include: {
+            user: true,
+          },
         });
+
+        await createNotification(
+          updated.userId,
+          "Refund Request Update",
+          "Your refund request was not approved. Your booking remains confirmed.",
+          "/my-requests"
+        );
+
+        if (updated.user?.email) {
+
+          await sendEmail({
+            to: updated.user.email,
+
+            subject: "Refund Request Update",
+
+            html: `
+              <h1>Refund Request Update</h1>
+
+              <p>
+                After reviewing your request,
+                we are unable to approve the refund.
+              </p>
+
+              <p>
+                Your booking remains confirmed.
+              </p>
+
+              <p>
+                If you believe there are exceptional
+                circumstances, please contact support.
+              </p>
+            `,
+          });
+
+        }
 
       return res.json(updated);
     }
