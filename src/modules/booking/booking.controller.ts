@@ -562,3 +562,62 @@ export const updateTravelDate = async (
 
   }
 };
+
+
+export const startSupplierBooking = async (req: Request, res: Response) => {
+  try {
+
+    const { bookingId } = req.body;
+
+    if (!bookingId) {
+      return res.status(400).json({
+        message: "bookingId is required",
+      });
+    }
+
+    const booking =
+      await prisma.booking.findUnique({
+        where: {
+          id: bookingId,
+        },
+      });
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.tourId) {
+      return res.status(400).json({
+        message:
+          "Supplier booking tracking is only for AI trips",
+      });
+    }
+
+    const updated =
+      await prisma.booking.update({
+        where: {
+          id: bookingId,
+        },
+        data: {
+          supplierBookingStarted: true,
+        },
+      });
+
+    return res.json(updated);
+
+  } catch (err) {
+
+    console.error(
+      "SUPPLIER BOOKING ERROR:",
+      err
+    );
+
+    return res.status(500).json({
+      message:
+        "Failed to start supplier booking",
+    });
+
+  }
+};

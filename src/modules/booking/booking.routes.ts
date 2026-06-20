@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, updateTravelDate, requestRefund, processRefundRequest } from "./booking.controller";
+import { create, updateTravelDate, requestRefund, processRefundRequest, startSupplierBooking } from "./booking.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { adminMiddleware } from "../../middleware/admin.middleware";
 import { getMyBookings } from "./booking.controller";
@@ -13,5 +13,6 @@ router.patch("/status", authMiddleware, updateBookingStatus);
 router.patch("/:id/request-refund", authMiddleware, requestRefund);
 router.patch("/refund/process", authMiddleware, adminMiddleware, processRefundRequest);
 router.patch("/:id/travel-date", authMiddleware, updateTravelDate );
+router.patch("/supplier-booking", authMiddleware, adminMiddleware, startSupplierBooking);
 
 export default router;
