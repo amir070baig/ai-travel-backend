@@ -245,20 +245,42 @@ export const requestRefund = async (req: Request,res: Response) => {
         (1000 * 60 * 60);
 
       if (hoursUntilTravel >= 72) {
+
         refundPercentage = 100;
-      } else if (hoursUntilTravel >= 24) {
+
+      } else if (
+        hoursUntilTravel >= 24
+      ) {
+
         refundPercentage = 50;
+
       } else {
-        refundPercentage = 0;
+
+        return res.status(400).json({
+          message:
+            "This booking is no longer eligible for refund under the cancellation policy.",
+        });
+
       }
     }
 
+    
     // AI CUSTOM TRIP
     else {
-      refundPercentage =
+
+      if (
         booking.supplierBookingStarted
-          ? 0
-          : 80;
+      ) {
+
+        return res.status(400).json({
+          message:
+            "Supplier bookings have already been initiated. This booking is no longer eligible for refund.",
+        });
+
+      }
+
+      refundPercentage = 80;
+
     }
 
     const refundAmount =
@@ -439,6 +461,60 @@ export const processRefundRequest = async (req: Request, res: Response) => {
           });
 
         }
+
+      return res.json(updated);
+    }
+
+
+    if (action === "CANCEL_NO_REFUND") {
+
+      const updated =
+        await prisma.booking.update({
+          where: {
+            id: bookingId,
+          },
+          data: {
+            status: "CANCELLED",
+            refundProcessedAt: new Date(),
+          },
+          include: {
+            user: true,
+          },
+        });
+
+      await createNotification(
+        updated.userId,
+        "Booking Cancelled",
+        "Your booking has been cancelled. No refund was applicable under the cancellation policy.",
+        "/my-requests"
+      );
+
+      if (updated.user?.email) {
+
+        await sendEmail({
+          to: updated.user.email,
+
+          subject: "Booking Cancelled",
+
+          html: `
+            <h1>Booking Cancelled</h1>
+
+            <p>
+              Your booking has been cancelled.
+            </p>
+
+            <p>
+              According to the cancellation policy,
+              no refund was applicable for this booking.
+            </p>
+
+            <p>
+              If you have questions, please contact support.
+            </p>
+          `,
+        });
+
+      }
 
       return res.json(updated);
     }
