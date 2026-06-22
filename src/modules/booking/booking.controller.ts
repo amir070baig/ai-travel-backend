@@ -679,7 +679,51 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
         data: {
           supplierBookingStarted: true,
         },
+        include: {
+          user: true,
+        },
       });
+
+      await createNotification(
+        updated.userId,
+        "Travel Arrangements Started ✈️",
+        "Your travel arrangements are now being finalized. Supplier bookings have been initiated and cancellation may no longer be eligible for refund.",
+        "/my-bookings"
+      );
+
+      if (updated.user?.email) {
+
+        await sendEmail({
+          to: updated.user.email,
+
+          subject:
+            "Travel Arrangements Started ✈️",
+
+          html: `
+            <h1>
+              Travel Arrangements Started
+            </h1>
+
+            <p>
+              Your travel arrangements are now being finalized.
+            </p>
+
+            <p>
+              Our team has started supplier bookings and travel coordination for your trip.
+            </p>
+
+            <p>
+              As supplier bookings have now been initiated,
+              cancellation may no longer be eligible for refund according to our cancellation policy.
+            </p>
+
+            <p>
+              If you have any questions, please contact TourGen support.
+            </p>
+          `,
+        });
+
+      }
 
     return res.json(updated);
 
