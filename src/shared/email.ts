@@ -20,7 +20,7 @@ export const sendEmail = async ({
       await resend.emails.send({
 
         from:
-          "TourGen <onboarding@resend.dev>",
+          "TourGen <hello@tourgen.in>",
 
         to,
 
