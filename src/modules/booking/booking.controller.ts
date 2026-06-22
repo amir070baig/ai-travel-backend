@@ -528,6 +528,7 @@ export const processRefundRequest = async (req: Request, res: Response) => {
           },
           data: {
             status: "CONFIRMED",
+            refundRejectedAt: new Date(),
           },
           include: {
             user: true,

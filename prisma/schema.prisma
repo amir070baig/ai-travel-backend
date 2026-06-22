@@ -79,6 +79,7 @@ model Booking {
 
   refundRequestedAt DateTime?
   refundProcessedAt DateTime?
+  refundRejectedAt DateTime?
 
   refundPercentage Int?
   refundAmount     Int?
