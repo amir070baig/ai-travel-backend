@@ -664,6 +664,13 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
       });
     }
 
+    if (booking.supplierBookingStarted) {
+      return res.status(400).json({
+        message:
+          "Supplier booking already started",
+      });
+    }
+
     if (booking.tourId) {
       return res.status(400).json({
         message:
