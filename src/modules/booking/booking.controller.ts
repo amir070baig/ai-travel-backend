@@ -208,6 +208,13 @@ export const requestRefund = async (req: Request,res: Response) => {
       });
     }
 
+    if (booking.refundRejectedAt) {
+      return res.status(400).json({
+        message:
+          "Refund request has already been reviewed",
+      });
+    }
+
     if (booking.paymentStatus !== "PAID") {
       return res.status(400).json({
         message:
