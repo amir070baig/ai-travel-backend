@@ -17,6 +17,37 @@ export const createReview = async (
       comment,
     } = req.body;
 
+    const completedBooking =
+      await prisma.booking.findFirst({
+        where: {
+          userId,
+          tourId,
+          status: "COMPLETED",
+        },
+      });
+
+    if (!completedBooking) {
+      return res.status(403).json({
+        message:
+          "You can only review tours you have completed",
+      });
+    }
+
+    const existingReview =
+      await prisma.review.findFirst({
+        where: {
+          userId,
+          tourId,
+        },
+      });
+
+    if (existingReview) {
+      return res.status(400).json({
+        message:
+          "You have already reviewed this tour",
+      });
+    }
+
     const review =
       await prisma.review.create({
         data: {

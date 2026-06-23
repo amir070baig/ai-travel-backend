@@ -39,6 +39,42 @@ export const createBooking = async ({
       );
     }
 
+    if (travelDate) {
+
+      let tourHour = 6;
+
+      if (timeSlot === "Morning") {
+        tourHour = 9;
+      }
+
+      if (timeSlot === "Afternoon") {
+        tourHour = 14;
+      }
+
+      if (timeSlot === "Sunset") {
+        tourHour = 17;
+      }
+
+      const selectedTourDateTime =
+        new Date(
+          `${travelDate.toISOString().split("T")[0]}T${String(tourHour).padStart(2, "0")}:00:00`
+        );
+
+      const hoursUntilTour =
+        (
+          selectedTourDateTime.getTime() -
+          Date.now()
+        ) /
+        (1000 * 60 * 60);
+
+      if (hoursUntilTour < 12) {
+        throw new Error(
+          "This tour requires at least 12 hours advance notice"
+        );
+      }
+
+    }
+
     const totalPrice =
       tour.price * travelers;
 

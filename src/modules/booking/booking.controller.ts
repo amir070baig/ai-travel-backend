@@ -68,15 +68,25 @@ export const create = async (req: Request, res: Response) => {
       advanceAmount
     });
 
-    return res.json({
-      message: "Booking successful",
-      booking,
-    });
-  } catch (err) {
-    console.error("BOOKING ERROR:", err);
-    return res.status(500).json({ message: "Booking error" });
-  }
-};
+      return res.json({
+        message: "Booking successful",
+        booking,
+      });
+    } catch (err: any) {
+
+      console.error(
+        "BOOKING ERROR:",
+        err
+      );
+
+      return res.status(400).json({
+        message:
+          err.message ||
+          "Booking error",
+      });
+
+    }
+  };
 
 export const getMyBookings = async (req: Request, res: Response) => {
   try {
