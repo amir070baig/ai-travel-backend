@@ -25,15 +25,28 @@ export const createBooking = async ({
   let amount = 1000;
 
   if (tourId) {
-    const tour = await prisma.tour.findUnique({
-      where: { id: tourId },
-    });
+
+    const tour =
+      await prisma.tour.findUnique({
+        where: {
+          id: tourId,
+        },
+      });
 
     if (!tour) {
-      throw new Error("Tour not found");
+      throw new Error(
+        "Tour not found"
+      );
     }
 
-    amount = tour.price;
+    const totalPrice =
+      tour.price * travelers;
+
+    amount =
+      Math.floor(
+        totalPrice * 0.3
+      );
+
   }
 
   // 1. Save the created booking to a variable
@@ -53,7 +66,10 @@ export const createBooking = async ({
 
       requestId: requestId || null,
 
-      advanceAmount: advanceAmount || amount,
+      advanceAmount:
+        tourId
+          ? amount
+          : advanceAmount,
 
       // status: tourId
       //   ? "CONFIRMED"
@@ -75,12 +91,30 @@ export const createBooking = async ({
   if (user?.email) {
     await sendEmail({
       to: user.email,
-      subject: "Booking Confirmation - TourGen",
+
+      subject:
+        "Booking Request Received 📋 - TourGen",
+
       html: `
-        <h1>Booking Confirmed ✅</h1>
-        <p>Your booking has been received successfully.</p>
-        <p>Our travel team will contact you shortly.</p>
-        <p>Thank you for choosing TourGen.</p>
+        <h1>
+          Booking Request Received 📋
+        </h1>
+
+        <p>
+          We have received your booking request.
+        </p>
+
+        <p>
+          Your reservation will be confirmed only after the required advance payment is completed.
+        </p>
+
+        <p>
+          Please complete payment to secure your booking.
+        </p>
+
+        <p>
+          Thank you for choosing TourGen.
+        </p>
       `,
     });
   }
