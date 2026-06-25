@@ -32,4 +32,8 @@ export const tourSchema = z.object({
   pickupTime: z.string().optional(),
 
   availabilityNote: z.string().optional(),
+
+  itinerary: z.array(z.string()).optional(),
+
+  faq: z.array(z.string()).optional(),
 });

@@ -95,6 +95,7 @@ model Tour {
   imageUrl      String?
   gallery       String[]
   highlights    String[]
+  itinerary     String[]
   inclusions    String[]
   exclusions    String[]
   duration      String?
@@ -104,6 +105,7 @@ model Tour {
   createdAt     DateTime @default(now())
   bookings      Booking[]
   reviews       Review[]
+  faq String[]
 }
 
 model Notification {
