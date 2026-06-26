@@ -779,7 +779,7 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
         updated.userId,
         "Travel Arrangements Started ✈️",
         "Your travel arrangements are now being finalized. Supplier bookings have been initiated and cancellation may no longer be eligible for refund.",
-        "/my-bookings"
+        "/my-requests"
       );
 
       if (updated.user?.email) {
