@@ -193,6 +193,9 @@ export const getFeaturedAIReviews = async (
 ) => {
 
   try {
+    const allReviews = await prisma.review.findMany();
+    console.log("ALL REVIEWS");
+    console.log(allReviews)
 
     const reviews =
       await prisma.review.findMany({
