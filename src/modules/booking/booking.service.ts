@@ -9,6 +9,7 @@ interface BookingInput {
   travelDate?: Date;
   timeSlot?: string;
   travelers: number;
+  guideLanguage?: string;
   advanceAmount: number;
 }
 
@@ -20,6 +21,7 @@ export const createBooking = async ({
   travelDate,
   timeSlot,
   travelers,
+  guideLanguage,
   advanceAmount,
 }: BookingInput) => {
   let amount = 1000;
@@ -99,6 +101,8 @@ export const createBooking = async ({
       timeSlot,
 
       travelers,
+
+      guideLanguage,
 
       requestId: requestId || null,
 

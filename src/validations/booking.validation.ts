@@ -14,4 +14,5 @@ export const bookingSchema = z.object({
   timeSlot: z.string().optional(),
   // Add advanceAmount to satisfy your Prisma schema requirements
   advanceAmount: z.number().int().min(0).default(0),
+  guideLanguage: z.string().optional(),
 });

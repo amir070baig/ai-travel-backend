@@ -32,6 +32,7 @@ export const create = async (req: Request, res: Response) => {
       travelDate,
       timeSlot,
       travelers,
+      guideLanguage,
       advanceAmount,
     } = parsed.data;
 
@@ -65,6 +66,7 @@ export const create = async (req: Request, res: Response) => {
           : undefined,
       timeSlot,
       travelers,
+      guideLanguage,
       advanceAmount
     });
 

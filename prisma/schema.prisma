@@ -76,6 +76,7 @@ model Booking {
   travelDate    DateTime?
   timeSlot      String?
   travelers     Int @default(1)
+  guideLanguage String?
 
   refundRequestedAt DateTime?
   refundProcessedAt DateTime?
