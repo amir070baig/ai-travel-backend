@@ -32,6 +32,7 @@ model Itinerary {
   createdAt   DateTime @default(now())
   requests Request[]
   bookings    Booking[]
+  reviews Review[]
 }
 
 model Request {
@@ -123,13 +124,22 @@ model Notification {
 
 model Review {
   id        String   @id @default(uuid())
+
   rating    Int
   comment   String
+
   createdAt DateTime @default(now())
+
   userId    String
   user      User @relation(fields: [userId], references: [id])
-  tourId    String
-  tour      Tour @relation(fields: [tourId], references: [id])
+
+  tourId    String?
+  tour      Tour? @relation(fields: [tourId], references: [id])
+
+  itineraryId String?
+  itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
+
+  isFeatured Boolean @default(false)
 }
 
 model Lead {

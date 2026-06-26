@@ -13,16 +13,28 @@ export const createReview = async (
 
     const {
       tourId,
+      itineraryId,
       rating,
       comment,
     } = req.body;
+
+    if (!tourId && !itineraryId) {
+      return res.status(400).json({
+        message:
+          "Tour ID or Itinerary ID is required",
+      });
+    }
 
     const completedBooking =
       await prisma.booking.findFirst({
         where: {
           userId,
-          tourId,
+
           status: "COMPLETED",
+
+          ...(tourId
+            ? { tourId }
+            : { itineraryId }),
         },
       });
 
@@ -37,7 +49,10 @@ export const createReview = async (
       await prisma.review.findFirst({
         where: {
           userId,
-          tourId,
+
+          ...(tourId
+            ? { tourId }
+            : { itineraryId }),
         },
       });
 
@@ -51,14 +66,33 @@ export const createReview = async (
     const review =
       await prisma.review.create({
         data: {
+
           rating,
+
           comment,
+
           userId,
-          tourId,
+
+          tourId:
+            tourId || null,
+
+          itineraryId:
+            itineraryId || null,
+
         },
       });
 
-    res.json(review);
+    const createdReview =
+      await prisma.review.findUnique({
+        where: {
+          id: review.id,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+    res.json(createdReview);
 
   } catch (err) {
 
@@ -107,4 +141,47 @@ export const getTourReviews = async (
     });
 
   }
+};
+
+
+export const getItineraryReviews = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const itineraryId =
+      req.params.itineraryId as string;
+
+    const reviews =
+      await prisma.review.findMany({
+
+        where: {
+          itineraryId,
+        },
+
+        include: {
+          user: true,
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+
+      });
+
+    res.json(reviews);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message:
+        "Failed to fetch itinerary reviews",
+    });
+
+  }
+
 };

@@ -90,25 +90,89 @@ export const create = async (req: Request, res: Response) => {
     }
   };
 
-export const getMyBookings = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.userId;
+export const getMyBookings = async (
+  req: Request,
+  res: Response
+) => {
 
-    const bookings = await prisma.booking.findMany({
-      where: { userId },
-      include: {
-        tour: true,
-        itinerary: true,
-        request: true,
+  try {
+
+    const userId =
+      (req as any).user.userId;
+
+    const bookings =
+      await prisma.booking.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          tour: true,
+          itinerary: true,
+          request: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+    const reviews = await prisma.review.findMany({
+      where: {
+        userId,
       },
-      orderBy: { createdAt: "desc" },
+      select: {
+        tourId: true,
+        itineraryId: true,
+      },
     });
 
-    return res.json(bookings);
+    const bookingsWithReviewStatus =
+      bookings.map((booking) => {
+
+        const hasReviewed =
+          reviews.some((review) => {
+
+            if (booking.tourId) {
+              return (
+                review.tourId ===
+                booking.tourId
+              );
+            }
+
+            return (
+              review.itineraryId ===
+              booking.itineraryId
+            );
+
+          });
+
+        return {
+
+          ...booking,
+
+          hasReviewed,
+
+        };
+
+      });
+
+    return res.json(
+      bookingsWithReviewStatus
+    );
+
   } catch (err) {
-    console.error("FETCH ERROR:", err);
-    return res.status(500).json({ message: "Error fetching bookings" });
+
+    console.error(
+      "FETCH ERROR:",
+      err
+    );
+
+    return res.status(500).json({
+      message:
+        "Error fetching bookings",
+    });
+
   }
+
 };
 
 export const updateBookingStatus = async (
@@ -767,4 +831,53 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
     });
 
   }
+};
+
+
+export const getFeaturedAIReviews = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const reviews =
+      await prisma.review.findMany({
+
+        where: {
+          itineraryId: {
+            not: null,
+          },
+        },
+
+        include: {
+          itinerary: {
+            select: {
+              city: true,
+              days: true,
+              groupSize: true,
+              createdAt: true,
+            },
+          },
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+
+      });
+
+    res.json(reviews);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message:
+        "Failed to fetch AI reviews",
+    });
+
+  }
+
 };
