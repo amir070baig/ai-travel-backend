@@ -4,6 +4,7 @@ import {
   createReview,
   getTourReviews,
   getItineraryReviews,
+  getFeaturedAIReviews
 } from "./review.controller";
 
 import { authMiddleware } from "../../middleware/auth.middleware"
@@ -26,5 +27,7 @@ router.get(
   "/itinerary/:itineraryId",
   getItineraryReviews
 );
+
+router.get("/ai", getFeaturedAIReviews);
 
 export default router;

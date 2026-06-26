@@ -185,3 +185,52 @@ export const getItineraryReviews = async (
   }
 
 };
+
+
+export const getFeaturedAIReviews = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const reviews =
+      await prisma.review.findMany({
+
+        where: {
+          itineraryId: {
+            not: null,
+          },
+        },
+
+        include: {
+          itinerary: {
+            select: {
+              city: true,
+              days: true,
+              groupSize: true,
+              createdAt: true,
+            },
+          },
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+
+      });
+
+    res.json(reviews);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      message:
+        "Failed to fetch AI reviews",
+    });
+
+  }
+
+};
