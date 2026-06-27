@@ -187,54 +187,53 @@ export const getItineraryReviews = async (
 };
 
 
-// export const getFeaturedAIReviews = async (req: Request, res: Response) => {
+export const getFeaturedAIReviews = async (req: Request, res: Response) => {
 
-//   try {
-//     const allReviews = await prisma.review.findMany();
-//     console.log("ALL REVIEWS");
-//     console.log(allReviews)
+  try {
+    const allReviews = await prisma.review.findMany();
+    console.log("ALL REVIEWS");
+    console.log(allReviews)
 
-//     const reviews =
-//       await prisma.review.findMany({
+    // const reviews =
+    //   await prisma.review.findMany({
 
-//         where: {
-//           itineraryId: {
-//             not: null,
-//           },
-//         },
+    //     where: {
+    //       itineraryId: {
+    //         not: null,
+    //       },
+    //     },
 
-//         include: {
-//           itinerary: {
-//             select: {
-//               city: true,
-//               days: true,
-//               groupSize: true,
-//               createdAt: true,
-//             },
-//           },
-//         },
+    //     include: {
+    //       itinerary: {
+    //         select: {
+    //           city: true,
+    //           days: true,
+    //           groupSize: true,
+    //           createdAt: true,
+    //         },
+    //       },
+    //     },
 
-//         orderBy: {
-//           createdAt: "desc",
-//         },
+    //     orderBy: {
+    //       createdAt: "desc",
+    //     },
 
-//       });
+    //   });
+    const reviews = await prisma.review.findMany();
 
-//     res.json(reviews);
+    console.log(reviews);
 
-//   } catch (err) {
+    res.json(reviews);
 
-//     console.error(err);
+  } catch (err) {
 
-//     res.status(500).json({
-//       message:
-//         "Failed to fetch AI reviews",
-//     });
+    console.error(err);
 
-//   }
+    res.status(500).json({
+      message:
+        "Failed to fetch AI reviews",
+    });
 
-// };
+  }
 
-const reviews = await prisma.review.findMany();
-
-console.log(reviews);
+};
