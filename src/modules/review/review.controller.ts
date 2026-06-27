@@ -194,34 +194,31 @@ export const getFeaturedAIReviews = async (req: Request, res: Response) => {
     console.log("ALL REVIEWS");
     console.log(allReviews)
 
-    // const reviews =
-    //   await prisma.review.findMany({
+    const reviews =
+      await prisma.review.findMany({
 
-    //     where: {
-    //       itineraryId: {
-    //         not: null,
-    //       },
-    //     },
+        where: {
+          itineraryId: {
+            not: null,
+          },
+        },
 
-    //     include: {
-    //       itinerary: {
-    //         select: {
-    //           city: true,
-    //           days: true,
-    //           groupSize: true,
-    //           createdAt: true,
-    //         },
-    //       },
-    //     },
+        include: {
+          itinerary: {
+            select: {
+              city: true,
+              days: true,
+              groupSize: true,
+              createdAt: true,
+            },
+          },
+        },
 
-    //     orderBy: {
-    //       createdAt: "desc",
-    //     },
+        orderBy: {
+          createdAt: "desc",
+        },
 
-    //   });
-    const reviews = await prisma.review.findMany();
-
-    console.log(reviews);
+      });
 
     res.json(reviews);
 

@@ -19,8 +19,8 @@ router.post(
 );
 
 router.get(
-  "/:tourId",
-  getTourReviews
+  "/ai",
+  getFeaturedAIReviews
 );
 
 router.get(
@@ -28,6 +28,9 @@ router.get(
   getItineraryReviews
 );
 
-router.get("/ai", getFeaturedAIReviews);
+router.get(
+  "/:tourId",
+  getTourReviews
+);
 
 export default router;
