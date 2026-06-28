@@ -16,6 +16,8 @@ model User {
   bookings Booking[]
   notifications Notification[]
   reviews  Review[]
+  resetToken           String?
+  resetTokenExpiresAt  DateTime?
 }
 
 model Itinerary {
