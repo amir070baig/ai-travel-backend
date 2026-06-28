@@ -700,16 +700,34 @@ export const updateTravelDate = async (
       });
     }
 
-    const booking =
-      await prisma.booking.update({
-        where: { id },
+    const userId = (req as any).user.userId;
 
-        data: {
-          travelDate: new Date(
-            travelDate
-          ),
-        },
+    const existingBooking = await prisma.booking.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingBooking) {
+      return res.status(404).json({
+        message: "Booking not found",
       });
+    }
+
+    if (existingBooking.userId !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+
+    const booking = await prisma.booking.update({
+      where: {
+        id,
+      },
+      data: {
+        travelDate: new Date(travelDate),
+      },
+    });
 
     res.json(booking);
 

@@ -14,6 +14,7 @@ import uploadRoutes from "./modules/upload/upload.routes";
 import reviewRoutes from "./modules/review/review.routes";
 import leadRoutes from "./modules/lead/lead.routes";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 // @ts-ignore: no declaration file for cookie-parser
 import cookieParser from "cookie-parser";
 
@@ -27,6 +28,11 @@ const limiter = rateLimit({
     "Too many requests. Please try again later.",
 });
 
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(limiter);
 app.use(
   cors({
@@ -34,8 +40,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 app.use("/payments/webhook", express.raw({type: "*/*",}));
+app.use(express.json());
 app.use(cookieParser());
 
 app.use("/auth", authRoutes);
@@ -50,10 +56,10 @@ app.use("/notifications", notificationRoutes);
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });
-app.use("/payments", paymentRoutes);
+// app.use("/payments", paymentRoutes);
 app.use("/pdf", pdfRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/leads", leadRoutes);
-app.use("/ai", aiRoutes);
+// app.use("/ai", aiRoutes);
 export default app;
