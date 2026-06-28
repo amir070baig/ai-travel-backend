@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { register, login, resetPassword, me } from "./auth.controller";
+import { register, login, logout, resetPassword, me } from "./auth.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 
 const router = Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/logout", logout);
 router.post("/reset-password", resetPassword);
 router.get("/me", authMiddleware, me);
 
