@@ -223,3 +223,33 @@ export const deleteTour = async (
     res.status(500).json({ message: "Failed to delete tour" });
   }
 };
+
+
+export const getAllToursAdmin = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const tours = await prisma.tour.findMany({
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+    });
+
+    return res.json(tours);
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Failed to fetch tours",
+    });
+
+  }
+
+};

@@ -6,11 +6,19 @@ import {
   updateTour,
   deleteTour,
   toggleTourAvailability,
+  getAllToursAdmin
 } from "./tour.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { adminMiddleware } from "../../middleware/admin.middleware";
 
 const router = Router();
+
+router.get(
+  "/admin/all",
+  authMiddleware,
+  adminMiddleware,
+  getAllToursAdmin
+);
 
 // GET all tours
 router.get("/", async (req, res) => {
