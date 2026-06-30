@@ -89,6 +89,9 @@ model Booking {
   refundAmount     Int?
 
   supplierBookingStarted Boolean @default(false)
+
+  adminCancellationReason String?
+  cancelledByAdmin Boolean @default(false)
 }
 
 model Tour {
@@ -110,6 +113,8 @@ model Tour {
   bookings      Booking[]
   reviews       Review[]
   faq String[]
+  isActive Boolean @default(true)
+  unavailableReason String?
 }
 
 model Notification {

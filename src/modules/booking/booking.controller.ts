@@ -90,6 +90,7 @@ export const create = async (req: Request, res: Response) => {
     }
   };
 
+  
 export const getMyBookings = async (
   req: Request,
   res: Response
@@ -849,4 +850,172 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
     });
 
   }
+};
+
+export const adminCancelBooking = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const {
+      bookingId,
+      reason,
+    } = req.body;
+
+    if (!bookingId || !reason) {
+
+      return res.status(400).json({
+        message: "Booking ID and reason are required",
+      });
+
+    }
+
+    const booking =
+      await prisma.booking.findUnique({
+
+        where: {
+          id: bookingId,
+        },
+
+        include: {
+          user: true,
+          tour: true,
+          itinerary: true,
+        },
+
+      });
+
+    if (!booking) {
+
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+
+    }
+
+    if (
+      booking.status === "CANCELLED" ||
+      booking.status === "REFUNDED" ||
+      booking.status === "REFUND_PENDING"
+    ) {
+      return res.status(400).json({
+        message: "This booking has already been cancelled or is already in the refund process.",
+      });
+    }
+
+    const updateData: any = {
+
+      cancelledByAdmin: true,
+
+      adminCancellationReason: reason,
+
+    };
+
+    if (booking.paymentStatus === "PAID") {
+
+      updateData.status = "REFUND_PENDING";
+
+      updateData.refundPercentage = 100;
+
+      updateData.refundAmount =
+        booking.advanceAmount;
+
+      updateData.refundRequestedAt =
+        new Date();
+
+    } else {
+
+      updateData.status = "CANCELLED";
+
+    }
+
+    const updatedBooking =
+      await prisma.booking.update({
+
+        where: {
+          id: bookingId,
+        },
+
+        data: updateData,
+
+      });
+
+    await prisma.notification.create({
+
+      data: {
+
+        userId: booking.userId,
+
+        title: "Booking Cancelled",
+
+        message:
+          `Unfortunately we had to cancel your booking. Reason: ${reason}`,
+
+        link: "/my-bookings",
+
+      },
+
+    });
+
+    if (booking.user?.email) {
+
+      await sendEmail({
+
+        to: booking.user.email,
+
+        subject: "Booking Cancelled",
+
+        html: `
+          <h2>Your booking has been cancelled</h2>
+
+          <p>
+            Reason:
+            <strong>${reason}</strong>
+          </p>
+
+          ${
+            booking.paymentStatus === "PAID"
+              ? `
+                <p>
+                  A full refund has been initiated.
+                </p>
+              `
+              : `
+                <p>
+                  No payment had been received.
+                </p>
+              `
+          }
+
+          <p>
+            We sincerely apologize for the inconvenience.
+          </p>
+        `,
+
+      });
+
+    }
+
+    return res.json({
+
+      success: true,
+
+      booking: updatedBooking,
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+
+      message: "Failed to cancel booking",
+
+    });
+
+  }
+
 };

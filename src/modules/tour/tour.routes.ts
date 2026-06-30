@@ -5,6 +5,7 @@ import {
   createTour,
   updateTour,
   deleteTour,
+  toggleTourAvailability,
 } from "./tour.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { adminMiddleware } from "../../middleware/admin.middleware";
@@ -60,6 +61,13 @@ router.patch(
   authMiddleware,
   adminMiddleware,
   updateTour
+);
+
+router.patch(
+  "/:id/toggle-availability",
+  authMiddleware,
+  adminMiddleware,
+  toggleTourAvailability
 );
 
 router.delete(

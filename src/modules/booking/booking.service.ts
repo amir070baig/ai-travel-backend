@@ -41,6 +41,14 @@ export const createBooking = async ({
       );
     }
 
+    if (!tour.isActive) {
+
+      throw new Error(
+        "This tour is temporarily unavailable."
+      );
+
+    }
+
     if (travelDate) {
 
       let tourHour = 6;

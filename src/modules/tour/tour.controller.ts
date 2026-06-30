@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../shared/prisma/client";
 // 1. Import your tour validation schema
 import { tourSchema } from "../../validations/tour.validation";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // Define a strict interface for route params
 interface TourParams {
@@ -96,10 +97,7 @@ export const createTour = async (
   }
 };
 
-export const updateTour = async (
-  req: Request<TourParams>, 
-  res: Response
-) => {
+export const updateTour = async (req: Request<TourParams>, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -165,6 +163,42 @@ export const updateTour = async (
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update tour" });
+  }
+};
+
+export const toggleTourAvailability = async (req: Request<TourParams>, res: Response) => {
+  try {
+
+    const { id } = req.params;
+
+    const tour = await prisma.tour.findUnique({
+      where: { id },
+    });
+
+    if (!tour) {
+      return res.status(404).json({
+        message: "Tour not found",
+      });
+    }
+
+    const updatedTour =
+      await prisma.tour.update({
+        where: { id },
+        data: {
+          isActive: !tour.isActive,
+        },
+      });
+
+    return res.json(updatedTour);
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Failed to update availability",
+    });
+
   }
 };
 
