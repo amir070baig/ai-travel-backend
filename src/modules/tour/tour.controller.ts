@@ -233,11 +233,12 @@ export const getAllToursAdmin = async (
   try {
 
     const tours = await prisma.tour.findMany({
-
+      include: {
+        bookings: true,
+      },
       orderBy: {
         createdAt: "desc",
       },
-
     });
 
     return res.json(tours);

@@ -852,10 +852,7 @@ export const startSupplierBooking = async (req: Request, res: Response) => {
   }
 };
 
-export const adminCancelBooking = async (
-  req: Request,
-  res: Response
-) => {
+export const adminCancelBooking = async (req: Request, res: Response) => {
 
   try {
 
