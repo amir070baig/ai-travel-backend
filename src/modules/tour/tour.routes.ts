@@ -14,8 +14,13 @@ const router = Router();
 
 // GET all tours
 router.get("/", async (req, res) => {
-  const tours = await (prisma as any).tour.findMany({
-    orderBy: { createdAt: "desc" },
+  const tours = await prisma.tour.findMany({
+    where: {
+      isActive: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   res.json(tours);
