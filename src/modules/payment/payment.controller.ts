@@ -164,10 +164,22 @@ export const verifyPayment = async (req: Request, res: Response) => {
     if (booking?.user?.email) {
       await sendEmail({
         to: booking.user.email,
-        subject: "Payment Received ✅",
+        subject: "Advance Payment Received ✅",
         html: `
-          <h1>Payment Successful</h1>
-          <p>We have received your payment successfully.</p>
+          <h1>Advance Payment Successful</h1>
+          <h3>Payment Schedule</h3>
+
+            <p>
+
+            30% advance payment has been received successfully.
+
+            </p>
+
+            <p>
+
+            The remaining 70% can be paid when your trip begins or at any convenient time during your tour.
+
+            </p>
           <p>Your booking is now confirmed.</p>
         `,
       });
