@@ -117,10 +117,18 @@ export const submitRequest = async (req: Request, res: Response) => {
 
   } catch (err: any) {
 
-    res.status(400).json({
+    if (
+      err.message ===
+      "AI Concierge is temporarily unavailable. Please try again later."
+    ) {
+      return res.status(403).json({
+        message: err.message,
+      });
+    }
+
+    return res.status(400).json({
       message:
-        err.message ||
-        "Error creating request",
+        err.message || "Error creating request",
     });
 
   }
