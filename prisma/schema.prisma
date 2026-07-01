@@ -29,6 +29,9 @@ model Itinerary {
   budget      String
   title       String?
   groupSize   Int
+  travelStyle String?
+  tripType     String?
+  interests    String?
   contentJson String
   version     Int      @default(1)
   createdAt   DateTime @default(now())
