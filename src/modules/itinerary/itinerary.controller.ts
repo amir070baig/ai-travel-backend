@@ -44,6 +44,8 @@ export const saveItineraryController = async (req: Request, res: Response) => {
       groupSize,
       city,
       travelStyle,
+      tripType,
+      interests,
     } = req.body;
 
     const itineraryTitle =
@@ -62,8 +64,12 @@ export const saveItineraryController = async (req: Request, res: Response) => {
         budget,
         groupSize,
 
+        travelStyle,
+        tripType,
+        interests,
+
         contentJson: content,
-      },
+      }
     });
 
     res.json(itinerary);
