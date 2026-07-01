@@ -950,7 +950,7 @@ export const adminCancelBooking = async (req: Request, res: Response) => {
         message:
           `Unfortunately we had to cancel your booking. Reason: ${reason}`,
 
-        link: "/my-bookings",
+        link: "/my-requests",
 
       },
 

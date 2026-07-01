@@ -12,6 +12,7 @@ import paymentRoutes from "./modules/payment/payment.routes";
 import pdfRoutes from "./modules/pdf/pdf.routes";
 import uploadRoutes from "./modules/upload/upload.routes";
 import reviewRoutes from "./modules/review/review.routes";
+import settingsRoutes from "./modules/settings/settings.routes";
 import leadRoutes from "./modules/lead/lead.routes";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -61,6 +62,7 @@ app.get("/", (req, res) => {
 app.use("/pdf", pdfRoutes);
 app.use("/upload", uploadRoutes);
 app.use("/reviews", reviewRoutes);
+app.use("/settings", settingsRoutes);
 app.use("/leads", leadRoutes);
 // app.use("/ai", aiRoutes);
 export default app;

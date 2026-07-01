@@ -169,6 +169,11 @@ model RequestMessage {
   createdAt  DateTime @default(now())
 }
 
+model SiteSettings {
+  id                Int     @id @default(1)
+  aiBookingsEnabled Boolean @default(true)
+}
+
 enum RequestStatus {
   SUBMITTED
   UNDER_REVIEW
