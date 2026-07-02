@@ -11,8 +11,6 @@ const router = Router();
 
 router.get(
   "/",
-  authMiddleware,
-  adminMiddleware,
   getSettings
 );
 
