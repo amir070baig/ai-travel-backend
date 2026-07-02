@@ -7,11 +7,15 @@ import { createNotification, notifyAdmins } from "../notification/notification.s
 
 export const create = async (req: Request, res: Response) => {
   try {
+    
+    console.log("BOOKING BODY:", req.body);
 
     const parsed =
       bookingSchema.safeParse(
         req.body
       );
+    
+    console.log("PARSED RESULT:", parsed);
 
     if (!parsed.success) {
 
