@@ -84,6 +84,13 @@ model Booking {
   travelers     Int @default(1)
   guideLanguage String?
 
+  fullName        String?
+  email           String?
+  country         String?
+  whatsapp        String?
+  hotelPickup     String?
+  specialRequests String?
+
   refundRequestedAt DateTime?
   refundProcessedAt DateTime?
   refundRejectedAt DateTime?

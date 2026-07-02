@@ -33,6 +33,14 @@ export const create = async (req: Request, res: Response) => {
       timeSlot,
       travelers,
       guideLanguage,
+
+      fullName,
+      email,
+      country,
+      whatsapp,
+      hotelPickup,
+      specialRequests,
+
       advanceAmount,
     } = parsed.data;
 
@@ -67,7 +75,15 @@ export const create = async (req: Request, res: Response) => {
       timeSlot,
       travelers,
       guideLanguage,
-      advanceAmount
+
+      fullName,
+      email,
+      country,
+      whatsapp,
+      hotelPickup,
+      specialRequests,
+
+      advanceAmount,
     });
 
       return res.json({
