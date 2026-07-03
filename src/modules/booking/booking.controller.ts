@@ -698,16 +698,21 @@ export const processRefundRequest = async (req: Request, res: Response) => {
 };
 
 
-export const updateTravelDate = async (
-  req: Request,
-  res: Response
-) => {
+export const updateTravelDate = async (req: Request, res: Response) => {
   try {
 
     const idParam = req.params.id;
     const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
-    const { travelDate } = req.body;
+    const {
+      travelDate,
+      fullName,
+      email,
+      country,
+      whatsapp,
+      hotelPickup,
+      specialRequests,
+    } = req.body;
 
     if (!id) {
       return res.status(400).json({
@@ -747,6 +752,13 @@ export const updateTravelDate = async (
       },
       data: {
         travelDate: new Date(travelDate),
+
+        fullName,
+        email,
+        country,
+        whatsapp,
+        hotelPickup,
+        specialRequests,
       },
     });
 
