@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../../shared/prisma/client";
 import { leadSchema } from "../../validations/lead.validation";
-// 1. Import your existing sendEmail utility
-import { sendEmail } from "./email"; // Adjust this relative path to match where your email.ts lives
+import { sendEmail } from "../../shared/email";
 
 export const createLead = async (req: Request, res: Response) => {
   try {
