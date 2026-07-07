@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from "../../shared/prisma/client";
-// 1. Import your lead validation schema
 import { leadSchema } from "../../validations/lead.validation";
+// 1. Import your existing sendEmail utility
+import { sendEmail } from "./email"; // Adjust this relative path to match where your email.ts lives
 
 export const createLead = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,40 @@ export const createLead = async (req: Request, res: Response) => {
         message,
       },
     });
+
+    // 4. Trigger emails in the background using your Resend utility
+    try {
+      // Email A: Notify the Admin Team
+      await sendEmail({
+        to: "tourgenteam@gmail.com", 
+        subject: `🚨 New Lead Received: ${name}`,
+        html: `
+          <h3>New Trip Consultation Requested</h3>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+          <p><strong>Message:</strong> ${message || "No custom message provided"}</p>
+        `,
+      });
+
+      // Email B: Send Confirmation to the Customer
+      await sendEmail({
+        to: email,
+        subject: `Thank you for contacting TourGen, ${name}!`,
+        html: `
+          <h3>Hello ${name},</h3>
+          <p>We've successfully received your trip specs regarding your itinerary planning!</p>
+          <p>One of our seasoned travel specialists is checking local timing windows, crowd paths, and slots right now. We will contact you shortly.</p>
+          <br/>
+          <p>Best regards,</p>
+          <p><strong>The TourGen Team</strong></p>
+        `,
+      });
+    } catch (emailErr) {
+      // Wrapped in a try/catch so that even if Resend encounters an error (e.g., API key issue),
+      // the API doesn't crash, and the customer still gets a successful response since their lead saved to the database.
+      console.error("Failed to process background email dispatches:", emailErr);
+    }
 
     res.json(lead);
   } catch (err) {
