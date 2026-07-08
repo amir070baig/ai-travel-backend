@@ -119,6 +119,7 @@ model Tour {
   pickupPoint   String?
   pickupTime      String?
   availabilityNote String?
+  timeSlots         String[]  @default([])
   createdAt     DateTime @default(now())
   bookings      Booking[]
   reviews       Review[]

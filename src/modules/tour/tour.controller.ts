@@ -33,10 +33,7 @@ export const getTourById = async (
   }
 };
 
-export const createTour = async (
-  req: Request,
-  res: Response
-) => {
+export const createTour = async (req: Request, res: Response) => {
   try {
     // 2. Coerce price string to number before running safeParse if it comes from a form-data request
     const bodyToValidate = {
@@ -69,6 +66,7 @@ export const createTour = async (
       availabilityNote,
       itinerary,
       faq,
+      timeSlots,
     } = parsed.data;
 
     const tour = await prisma.tour.create({
@@ -87,6 +85,7 @@ export const createTour = async (
         availabilityNote,
         itinerary,
         faq,
+        timeSlots,
       },
     });
 
@@ -137,6 +136,7 @@ export const updateTour = async (req: Request<TourParams>, res: Response) => {
       availabilityNote,
       itinerary,
       faq,
+      timeSlots,
     } = parsed.data;
 
     const tour = await prisma.tour.update({
@@ -156,6 +156,7 @@ export const updateTour = async (req: Request<TourParams>, res: Response) => {
         availabilityNote,
         itinerary,
         faq,
+        timeSlots,
       },
     });
 

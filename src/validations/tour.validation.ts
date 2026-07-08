@@ -36,4 +36,6 @@ export const tourSchema = z.object({
   itinerary: z.array(z.string()).optional(),
 
   faq: z.array(z.string()).optional(),
+
+  timeSlots: z.array(z.string()).default([]),
 });
